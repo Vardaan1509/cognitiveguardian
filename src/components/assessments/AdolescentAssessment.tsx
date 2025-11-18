@@ -14,7 +14,7 @@ const AdolescentAssessment = ({ onBack }: Props) => {
   const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
   const [completed, setCompleted] = useState(false);
 
-  const tasks = [
+  const allTasks = [
     {
       type: "pattern",
       question: "Complete the pattern: 2, 4, 8, 16, __",
@@ -33,7 +33,48 @@ const AdolescentAssessment = ({ onBack }: Props) => {
       options: ["Green", "Yellow", "Purple", "Blue"],
       correct: 1,
     },
+    {
+      type: "reasoning",
+      question: "What season follows autumn?",
+      options: ["Summer", "Winter", "Spring", "Fall again"],
+      correct: 1,
+    },
+    {
+      type: "math",
+      question: "If Sarah has 8 candies and gives away 3, how many does she have left?",
+      options: ["5", "8", "11", "3"],
+      correct: 0,
+    },
+    {
+      type: "language",
+      question: "Which one of these is a verb?",
+      options: ["Happiness", "Running", "Tree", "Blue"],
+      correct: 1,
+    },
+    {
+      type: "health",
+      question: "Which one of these is a healthy habit?",
+      options: ["Eating sweets all day", "Exercising regularly", "Sleeping only 2 hours", "Never drinking water"],
+      correct: 1,
+    },
+    {
+      type: "logic",
+      question: "What does it mean if the traffic light turns green?",
+      options: ["Stop", "Go", "Slow down", "Turn off car"],
+      correct: 1,
+    },
+    {
+      type: "geography",
+      question: "Which of these is a continent?",
+      options: ["Amazon", "Africa", "Nile", "Pacific"],
+      correct: 1,
+    },
   ];
+
+  const [tasks] = useState(() => {
+    const shuffled = [...allTasks].sort(() => Math.random() - 0.5);
+    return shuffled.slice(0, 5);
+  });
 
   const handleAnswer = (index: number) => {
     setSelectedAnswer(index);
