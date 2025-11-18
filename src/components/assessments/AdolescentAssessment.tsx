@@ -3,16 +3,24 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { ArrowLeft, Target } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
+import PatientInfoForm from "./PatientInfoForm";
 
 interface Props {
   onBack: () => void;
 }
 
 const AdolescentAssessment = ({ onBack }: Props) => {
+  const [patientName, setPatientName] = useState<string | null>(null);
+  const [patientAge, setPatientAge] = useState<number | null>(null);
+  const [patientId, setPatientId] = useState<string | null>(null);
   const [currentTask, setCurrentTask] = useState(0);
   const [score, setScore] = useState(0);
   const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
   const [completed, setCompleted] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const { toast } = useToast();
 
   const allTasks = [
     {
@@ -76,6 +84,62 @@ const AdolescentAssessment = ({ onBack }: Props) => {
     return shuffled.slice(0, 5);
   });
 
+  const handlePatientInfoSubmit = async (name: string, age: number) => {
+    try {
+      const { data, error } = await supabase
+        .from("patients")
+        .insert({ name, age })
+        .select()
+        .single();
+
+      if (error) throw error;
+
+      setPatientName(name);
+      setPatientAge(age);
+      setPatientId(data.id);
+    } catch (error) {
+      console.error("Error saving patient info:", error);
+      toast({
+        title: "Error",
+        description: "Failed to save patient information. Please try again.",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const saveAssessmentResults = async () => {
+    if (!patientId) return;
+
+    setSaving(true);
+    try {
+      const percentage = (score / tasks.length) * 100;
+      
+      const { error } = await supabase.from("assessment_results").insert({
+        patient_id: patientId,
+        assessment_type: "adolescent",
+        score,
+        total_questions: tasks.length,
+        percentage,
+      });
+
+      if (error) throw error;
+
+      toast({
+        title: "Success",
+        description: "Assessment results saved successfully!",
+      });
+    } catch (error) {
+      console.error("Error saving results:", error);
+      toast({
+        title: "Error",
+        description: "Failed to save assessment results.",
+        variant: "destructive",
+      });
+    } finally {
+      setSaving(false);
+    }
+  };
+
   const handleAnswer = (index: number) => {
     setSelectedAnswer(index);
     if (index === tasks[currentTask].correct) {
@@ -88,11 +152,21 @@ const AdolescentAssessment = ({ onBack }: Props) => {
         setCurrentTask(currentTask + 1);
       } else {
         setCompleted(true);
+        setTimeout(() => saveAssessmentResults(), 500);
       }
     }, 1000);
   };
 
   const progress = ((currentTask + 1) / tasks.length) * 100;
+
+  if (!patientName || !patientAge) {
+    return (
+      <PatientInfoForm
+        onSubmit={handlePatientInfoSubmit}
+        ageGroup="adolescent"
+      />
+    );
+  }
 
   if (completed) {
     return (
@@ -101,10 +175,15 @@ const AdolescentAssessment = ({ onBack }: Props) => {
           <div className="w-20 h-20 rounded-full bg-gradient-to-br from-blue-400 to-cyan-500 flex items-center justify-center mx-auto mb-6">
             <Target className="w-10 h-10 text-white" />
           </div>
-          <h2 className="text-4xl font-bold mb-4 text-foreground">Assessment Complete!</h2>
+          <h2 className="text-4xl font-bold mb-4 text-foreground">Assessment Complete, {patientName}!</h2>
           <p className="text-xl text-muted-foreground mb-8">
             Score: {score} / {tasks.length} ({Math.round((score / tasks.length) * 100)}%)
           </p>
+          {saving && (
+            <p className="text-sm text-muted-foreground mb-4">
+              Saving results...
+            </p>
+          )}
           <Button onClick={onBack} size="lg">
             <ArrowLeft className="mr-2 w-4 h-4" />
             Back to Age Selection
