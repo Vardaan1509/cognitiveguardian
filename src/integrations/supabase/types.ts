@@ -14,10 +14,89 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      assessment_results: {
+        Row: {
+          assessment_type: string
+          completed_at: string
+          id: string
+          patient_id: string
+          percentage: number
+          score: number
+          total_questions: number
+        }
+        Insert: {
+          assessment_type: string
+          completed_at?: string
+          id?: string
+          patient_id: string
+          percentage: number
+          score: number
+          total_questions: number
+        }
+        Update: {
+          assessment_type?: string
+          completed_at?: string
+          id?: string
+          patient_id?: string
+          percentage?: number
+          score?: number
+          total_questions?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "assessment_results_patient_id_fkey"
+            columns: ["patient_id"]
+            isOneToOne: false
+            referencedRelation: "assessment_data_export"
+            referencedColumns: ["patient_id"]
+          },
+          {
+            foreignKeyName: "assessment_results_patient_id_fkey"
+            columns: ["patient_id"]
+            isOneToOne: false
+            referencedRelation: "patients"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      patients: {
+        Row: {
+          age: number
+          created_at: string
+          id: string
+          name: string
+        }
+        Insert: {
+          age: number
+          created_at?: string
+          id?: string
+          name: string
+        }
+        Update: {
+          age?: number
+          created_at?: string
+          id?: string
+          name?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
-      [_ in never]: never
+      assessment_data_export: {
+        Row: {
+          age: number | null
+          assessment_type: string | null
+          completed_at: string | null
+          name: string | null
+          patient_id: string | null
+          patient_registered_at: string | null
+          percentage: number | null
+          result_id: string | null
+          score: number | null
+          total_questions: number | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
       [_ in never]: never
