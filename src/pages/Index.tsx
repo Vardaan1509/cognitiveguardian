@@ -3,10 +3,9 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Brain, Users, Activity, AlertCircle, TrendingUp, ArrowRight } from "lucide-react";
 import AgeSelection from "@/components/AgeSelection";
-import Dashboard from "@/components/Dashboard";
 
 const Index = () => {
-  const [view, setView] = useState<"home" | "assessment" | "dashboard">("home");
+  const [view, setView] = useState<"home" | "assessment">("home");
 
   return (
     <div className="min-h-screen bg-background">
@@ -37,13 +36,6 @@ const Index = () => {
             >
               Assessment
             </Button>
-            <Button
-              variant={view === "dashboard" ? "default" : "ghost"}
-              onClick={() => setView("dashboard")}
-              size="sm"
-            >
-              Dashboard
-            </Button>
           </div>
         </div>
       </nav>
@@ -72,13 +64,6 @@ const Index = () => {
               >
                 Start Assessment
                 <ArrowRight className="ml-2 w-4 h-4 group-hover:translate-x-1 transition-transform" />
-              </Button>
-              <Button
-                size="lg"
-                variant="outline"
-                onClick={() => setView("dashboard")}
-              >
-                View Dashboard
               </Button>
             </div>
           </div>
@@ -155,7 +140,6 @@ const Index = () => {
       )}
 
       {view === "assessment" && <AgeSelection />}
-      {view === "dashboard" && <Dashboard />}
     </div>
   );
 };
