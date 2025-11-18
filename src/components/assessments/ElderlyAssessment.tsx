@@ -2,7 +2,8 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
-import { ArrowLeft, Heart, Check, X } from "lucide-react";
+import { ArrowLeft, Heart } from "lucide-react";
+import { Textarea } from "@/components/ui/textarea";
 
 interface Props {
   onBack: () => void;
@@ -11,44 +12,81 @@ interface Props {
 const ElderlyAssessment = ({ onBack }: Props) => {
   const [currentExercise, setCurrentExercise] = useState(0);
   const [score, setScore] = useState(0);
-  const [selectedAnswer, setSelectedAnswer] = useState<boolean | null>(null);
+  const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
+  const [textResponse, setTextResponse] = useState("");
   const [completed, setCompleted] = useState(false);
 
-  const exercises = [
+  const allExercises = [
     {
-      type: "Memory",
-      question: "Please remember these three words: Apple, Table, Penny. We'll ask you to recall them later.",
-      isRecall: false,
-      nextStep: "Continue",
+      type: "Memory Introduction",
+      question: "Please remember these three words: Apple, Table, Car. We'll ask you to recall them later.",
+      isMemoryIntro: true,
     },
     {
-      type: "Attention",
-      question: "What day of the week is it today?",
-      options: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"],
+      type: "Orientation",
+      question: "What season comes after spring?",
+      options: ["Summer", "Winter", "Autumn", "Spring again"],
+      correct: 0,
       isMultiChoice: true,
     },
     {
       type: "Memory Recall",
-      question: "Can you recall the three words from earlier?",
-      hint: "The words were: Apple, Table, Penny",
-      options: ["Apple, Table, Penny", "Apple, Chair, Penny", "Orange, Table, Penny", "Apple, Table, Dime"],
-      isMultiChoice: true,
+      question: "Can you remember and repeat these three words from earlier?",
+      options: ["Apple, Table, Car", "Apple, Chair, Car", "Orange, Table, Car", "Apple, Table, Cart"],
       correct: 0,
+      isMultiChoice: true,
+    },
+    {
+      type: "Personal Memory",
+      question: "What city or town were you born in?",
+      isOpenEnded: true,
+    },
+    {
+      type: "Personal Memory",
+      question: "Can you name any of your grandchildren or family members?",
+      isOpenEnded: true,
+    },
+    {
+      type: "Recent Memory",
+      question: "Recall what you had for breakfast today.",
+      isOpenEnded: true,
+    },
+    {
+      type: "Personal History",
+      question: "What was the name of your first school or workplace?",
+      isOpenEnded: true,
     },
     {
       type: "Mobility",
-      question: "Please stand up from your chair, walk a few steps forward, turn around, walk back, and sit down.",
-      instruction: "Rate how easily you completed this task:",
+      question: "Please stand up from your chair, walk a few steps forward, turn around, walk back, and sit down. Rate how easily you completed this task:",
       options: ["Very Easy", "Easy", "Moderate", "Difficult", "Very Difficult"],
       isMultiChoice: true,
     },
   ];
 
+  const [exercises] = useState(() => {
+    const shuffled = [...allExercises].sort(() => Math.random() - 0.5);
+    return shuffled.slice(0, 5);
+  });
+
   const handleMultiChoice = (index: number) => {
+    setSelectedAnswer(index);
     const current = exercises[currentExercise];
     if (current.correct !== undefined && index === current.correct) {
       setScore(score + 1);
     }
+
+    setTimeout(() => {
+      setSelectedAnswer(null);
+      handleNext();
+    }, 1000);
+  };
+
+  const handleOpenEnded = () => {
+    if (textResponse.trim()) {
+      setScore(score + 1);
+    }
+    setTextResponse("");
     handleNext();
   };
 
@@ -113,39 +151,62 @@ const ElderlyAssessment = ({ onBack }: Props) => {
           </div>
 
           <div className="mb-8">
-            <h2 className="text-2xl font-bold mb-6 text-card-foreground leading-relaxed">
-              {current.question}
-            </h2>
+          <h2 className="text-2xl font-bold mb-8 text-card-foreground">
+            {current.question}
+          </h2>
 
-            {current.hint && (
-              <p className="text-muted-foreground mb-6 text-lg">{current.hint}</p>
-            )}
+          {current.isMemoryIntro && (
+            <div className="space-y-6">
+              <p className="text-lg text-muted-foreground text-center p-8 bg-secondary/5 rounded-lg">
+                Please take a moment to remember these words.
+              </p>
+              <Button onClick={handleNext} size="lg" className="w-full">
+                Continue
+              </Button>
+            </div>
+          )}
 
-            {current.instruction && (
-              <p className="text-muted-foreground mb-6 text-lg">{current.instruction}</p>
-            )}
-
-            {current.isMultiChoice ? (
-              <div className="grid gap-3">
-                {current.options?.map((option, index) => (
-                  <Button
-                    key={index}
-                    onClick={() => handleMultiChoice(index)}
-                    size="lg"
-                    variant="outline"
-                    className="justify-start text-left h-auto py-4 text-lg"
-                  >
-                    {option}
-                  </Button>
-                ))}
-              </div>
-            ) : (
-              <div className="flex gap-4 justify-center">
-                <Button onClick={handleNext} size="lg" className="px-8">
-                  {current.nextStep || "Continue"}
+          {current.isMultiChoice && (
+            <div className="grid gap-4">
+              {current.options?.map((option, index) => (
+                <Button
+                  key={index}
+                  onClick={() => handleMultiChoice(index)}
+                  size="lg"
+                  variant={
+                    selectedAnswer === index
+                      ? index === current.correct
+                        ? "default"
+                        : "destructive"
+                      : "outline"
+                  }
+                  disabled={selectedAnswer !== null}
+                  className="justify-start text-left h-auto py-4 transition-all"
+                >
+                  {option}
                 </Button>
-              </div>
-            )}
+              ))}
+            </div>
+          )}
+
+          {current.isOpenEnded && (
+            <div className="space-y-4">
+              <Textarea
+                value={textResponse}
+                onChange={(e) => setTextResponse(e.target.value)}
+                placeholder="Type your answer here..."
+                className="min-h-[120px]"
+              />
+              <Button
+                onClick={handleOpenEnded}
+                size="lg"
+                className="w-full"
+                disabled={!textResponse.trim()}
+              >
+                Continue
+              </Button>
+            </div>
+          )}
           </div>
         </Card>
       </div>

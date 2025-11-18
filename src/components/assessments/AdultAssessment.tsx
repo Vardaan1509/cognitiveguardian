@@ -3,48 +3,78 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { ArrowLeft, Briefcase } from "lucide-react";
-import { Textarea } from "@/components/ui/textarea";
 
 interface Props {
   onBack: () => void;
 }
 
 const AdultAssessment = ({ onBack }: Props) => {
-  const [currentScenario, setCurrentScenario] = useState(0);
-  const [responses, setResponses] = useState<string[]>([]);
-  const [currentResponse, setCurrentResponse] = useState("");
+  const [currentQuestion, setCurrentQuestion] = useState(0);
+  const [score, setScore] = useState(0);
+  const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
   const [completed, setCompleted] = useState(false);
 
-  const scenarios = [
+  const allQuestions = [
     {
-      title: "Emergency Response",
-      scenario: "You notice a colleague experiencing chest pain and difficulty breathing. They are pale and sweating. What immediate actions would you take?",
-      prompt: "Describe the steps you would take in order of priority:",
+      type: "Math",
+      question: "Which of the following is a prime number?",
+      options: ["21", "29", "30", "35"],
+      correct: 1,
     },
     {
-      title: "Problem Solving",
-      scenario: "Your team is behind schedule on a critical project. Resources are limited and stakeholders are concerned. How would you address this situation?",
-      prompt: "Outline your approach:",
+      type: "Math",
+      question: "If a train travels 60 miles in 1 hour and 30 minutes, what is its average speed?",
+      options: ["40 mph", "45 mph", "50 mph", "55 mph"],
+      correct: 0,
     },
     {
-      title: "Physical Coordination",
-      scenario: "Stand up and perform the following sequence: Touch your toes, then your nose, then extend both arms forward. Rate your coordination.",
-      prompt: "How did you perform this task? (1-5, 1=difficult, 5=easy)",
+      type: "Pattern",
+      question: "What is the next number in this sequence? 3, 6, 12, 24, ...",
+      options: ["36", "48", "54", "60"],
+      correct: 1,
+    },
+    {
+      type: "Practical",
+      question: "Which item would you use to cut paper?",
+      options: ["Scissors", "Spoon", "Fork", "Hammer"],
+      correct: 0,
+    },
+    {
+      type: "Safety",
+      question: "If you hear a fire alarm, what should you do?",
+      options: ["Ignore it", "Evacuate calmly", "Continue working", "Call a friend"],
+      correct: 1,
+    },
+    {
+      type: "Knowledge",
+      question: "What is the main purpose of a doctor?",
+      options: ["Sell medicine", "Help people stay healthy", "Drive ambulances", "Cook food"],
+      correct: 1,
     },
   ];
 
-  const handleNext = () => {
-    setResponses([...responses, currentResponse]);
-    setCurrentResponse("");
+  const [questions] = useState(() => {
+    const shuffled = [...allQuestions].sort(() => Math.random() - 0.5);
+    return shuffled.slice(0, 5);
+  });
 
-    if (currentScenario < scenarios.length - 1) {
-      setCurrentScenario(currentScenario + 1);
-    } else {
-      setCompleted(true);
+  const handleAnswer = (index: number) => {
+    setSelectedAnswer(index);
+    if (index === questions[currentQuestion].correct) {
+      setScore(score + 1);
     }
+
+    setTimeout(() => {
+      setSelectedAnswer(null);
+      if (currentQuestion < questions.length - 1) {
+        setCurrentQuestion(currentQuestion + 1);
+      } else {
+        setCompleted(true);
+      }
+    }, 1000);
   };
 
-  const progress = ((currentScenario + 1) / scenarios.length) * 100;
+  const progress = ((currentQuestion + 1) / questions.length) * 100;
 
   if (completed) {
     return (
@@ -55,7 +85,7 @@ const AdultAssessment = ({ onBack }: Props) => {
           </div>
           <h2 className="text-4xl font-bold mb-4 text-foreground">Assessment Complete</h2>
           <p className="text-xl text-muted-foreground mb-8">
-            Your responses have been recorded and will be analyzed by healthcare professionals.
+            Score: {score} / {questions.length} ({Math.round((score / questions.length) * 100)}%)
           </p>
           <Button onClick={onBack} size="lg">
             <ArrowLeft className="mr-2 w-4 h-4" />
@@ -78,41 +108,33 @@ const AdultAssessment = ({ onBack }: Props) => {
           <div className="mb-8">
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-lg font-semibold text-card-foreground">
-                Scenario {currentScenario + 1} of {scenarios.length}
+                Question {currentQuestion + 1} of {questions.length}
               </h3>
               <span className="text-sm px-3 py-1 bg-primary/10 text-primary rounded-full font-medium">
-                {scenarios[currentScenario].title}
+                {questions[currentQuestion].type}
               </span>
             </div>
             <Progress value={progress} className="h-2" />
           </div>
 
-          <div className="mb-8">
-            <h2 className="text-2xl font-bold mb-4 text-card-foreground">
-              {scenarios[currentScenario].title}
-            </h2>
-            <p className="text-lg text-muted-foreground mb-6">
-              {scenarios[currentScenario].scenario}
-            </p>
-            <label className="block text-sm font-medium mb-2 text-foreground">
-              {scenarios[currentScenario].prompt}
-            </label>
-            <Textarea
-              value={currentResponse}
-              onChange={(e) => setCurrentResponse(e.target.value)}
-              placeholder="Type your response here..."
-              className="min-h-[150px]"
-            />
-          </div>
+          <h2 className="text-2xl font-bold mb-8 text-card-foreground">
+            {questions[currentQuestion].question}
+          </h2>
 
-          <Button
-            onClick={handleNext}
-            size="lg"
-            disabled={!currentResponse.trim()}
-            className="w-full"
-          >
-            {currentScenario < scenarios.length - 1 ? "Next Scenario" : "Complete Assessment"}
-          </Button>
+          <div className="grid gap-4">
+            {questions[currentQuestion].options.map((option, index) => (
+              <Button
+                key={index}
+                onClick={() => handleAnswer(index)}
+                size="lg"
+                variant={selectedAnswer === index ? (index === questions[currentQuestion].correct ? "default" : "destructive") : "outline"}
+                disabled={selectedAnswer !== null}
+                className="justify-start text-left h-auto py-4 transition-all"
+              >
+                {option}
+              </Button>
+            ))}
+          </div>
         </Card>
       </div>
     </div>

@@ -13,7 +13,7 @@ const YouthAssessment = ({ onBack }: Props) => {
   const [score, setScore] = useState(0);
   const [completed, setCompleted] = useState(false);
 
-  const questions = [
+  const allQuestions = [
     {
       question: "Which color is the sky?",
       options: ["Red", "Blue", "Green", "Yellow"],
@@ -32,7 +32,48 @@ const YouthAssessment = ({ onBack }: Props) => {
       correct: 1,
       emoji: "🐮",
     },
+    {
+      question: "What day of the week comes after Tuesday?",
+      options: ["Monday", "Wednesday", "Friday", "Sunday"],
+      correct: 1,
+      emoji: "📅",
+    },
+    {
+      question: "Which of these is NOT a fruit?",
+      options: ["Banana", "Carrot", "Orange", "Grape"],
+      correct: 1,
+      emoji: "🥕",
+    },
+    {
+      question: "How many legs do most insects have?",
+      options: ["Four", "Six", "Eight", "Ten"],
+      correct: 1,
+      emoji: "🐛",
+    },
+    {
+      question: "What is the color of grass?",
+      options: ["Blue", "Green", "Red", "Yellow"],
+      correct: 1,
+      emoji: "🌱",
+    },
+    {
+      question: "Which animal is known as 'man's best friend'?",
+      options: ["Cat", "Dog", "Bird", "Fish"],
+      correct: 1,
+      emoji: "🐕",
+    },
+    {
+      question: "What do plants need to grow?",
+      options: ["Sunlight and water", "Sugar and salt", "Sand and toys", "Cold and dark"],
+      correct: 0,
+      emoji: "🌻",
+    },
   ];
+
+  const [questions] = useState(() => {
+    const shuffled = [...allQuestions].sort(() => Math.random() - 0.5);
+    return shuffled.slice(0, 5);
+  });
 
   const handleAnswer = (index: number) => {
     if (index === questions[currentQuestion].correct) {
