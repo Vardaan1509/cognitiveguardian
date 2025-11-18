@@ -1,8 +1,9 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Brain, Users, Activity, AlertCircle, TrendingUp, ArrowRight } from "lucide-react";
+import { Brain, Users, Activity, AlertCircle, TrendingUp, ArrowRight, FileSpreadsheet } from "lucide-react";
 import AgeSelection from "@/components/AgeSelection";
+import { Link } from "react-router-dom";
 
 const Index = () => {
   const [view, setView] = useState<"home" | "assessment">("home");
@@ -36,6 +37,12 @@ const Index = () => {
             >
               Assessment
             </Button>
+            <Link to="/data-export">
+              <Button variant="outline" size="sm">
+                <FileSpreadsheet className="w-4 h-4 mr-2" />
+                View Data
+              </Button>
+            </Link>
           </div>
         </div>
       </nav>

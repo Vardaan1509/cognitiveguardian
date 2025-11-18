@@ -3,15 +3,23 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { ArrowLeft, Star, Sparkles } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
+import PatientInfoForm from "./PatientInfoForm";
 
 interface Props {
   onBack: () => void;
 }
 
 const YouthAssessment = ({ onBack }: Props) => {
+  const [patientName, setPatientName] = useState<string | null>(null);
+  const [patientAge, setPatientAge] = useState<number | null>(null);
+  const [patientId, setPatientId] = useState<string | null>(null);
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [score, setScore] = useState(0);
   const [completed, setCompleted] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const { toast } = useToast();
 
   const allQuestions = [
     {
@@ -75,6 +83,62 @@ const YouthAssessment = ({ onBack }: Props) => {
     return shuffled.slice(0, 5);
   });
 
+  const handlePatientInfoSubmit = async (name: string, age: number) => {
+    try {
+      const { data, error } = await supabase
+        .from("patients")
+        .insert({ name, age })
+        .select()
+        .single();
+
+      if (error) throw error;
+
+      setPatientName(name);
+      setPatientAge(age);
+      setPatientId(data.id);
+    } catch (error) {
+      console.error("Error saving patient info:", error);
+      toast({
+        title: "Error",
+        description: "Failed to save patient information. Please try again.",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const saveAssessmentResults = async () => {
+    if (!patientId) return;
+
+    setSaving(true);
+    try {
+      const percentage = (score / questions.length) * 100;
+      
+      const { error } = await supabase.from("assessment_results").insert({
+        patient_id: patientId,
+        assessment_type: "youth",
+        score,
+        total_questions: questions.length,
+        percentage,
+      });
+
+      if (error) throw error;
+
+      toast({
+        title: "Success",
+        description: "Assessment results saved successfully!",
+      });
+    } catch (error) {
+      console.error("Error saving results:", error);
+      toast({
+        title: "Error",
+        description: "Failed to save assessment results.",
+        variant: "destructive",
+      });
+    } finally {
+      setSaving(false);
+    }
+  };
+
   const handleAnswer = (index: number) => {
     if (index === questions[currentQuestion].correct) {
       setScore(score + 1);
@@ -84,10 +148,20 @@ const YouthAssessment = ({ onBack }: Props) => {
       setCurrentQuestion(currentQuestion + 1);
     } else {
       setCompleted(true);
+      setTimeout(() => saveAssessmentResults(), 500);
     }
   };
 
   const progress = ((currentQuestion + 1) / questions.length) * 100;
+
+  if (!patientName || !patientAge) {
+    return (
+      <PatientInfoForm
+        onSubmit={handlePatientInfoSubmit}
+        ageGroup="youth"
+      />
+    );
+  }
 
   if (completed) {
     return (
@@ -97,10 +171,15 @@ const YouthAssessment = ({ onBack }: Props) => {
             <div className="w-24 h-24 rounded-full bg-gradient-to-br from-pink-400 to-purple-500 flex items-center justify-center mx-auto mb-4">
               <Sparkles className="w-12 h-12 text-white" />
             </div>
-            <h2 className="text-4xl font-bold mb-4 text-foreground">Great Job! 🎉</h2>
+            <h2 className="text-4xl font-bold mb-4 text-foreground">Great Job, {patientName}! 🎉</h2>
             <p className="text-xl text-muted-foreground mb-6">
               You got {score} out of {questions.length} correct!
             </p>
+            {saving && (
+              <p className="text-sm text-muted-foreground mb-4">
+                Saving results...
+              </p>
+            )}
             <div className="flex items-center justify-center gap-2 mb-8">
               {Array.from({ length: questions.length }).map((_, i) => (
                 <Star
