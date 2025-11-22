@@ -194,27 +194,27 @@ const AdolescentAssessment = ({ onBack }: Props) => {
   }
 
   return (
-    <div className="container mx-auto px-4 py-12">
+    <div className="container mx-auto px-4 py-12 animate-in fade-in duration-500">
       <div className="max-w-2xl mx-auto">
-        <Button onClick={onBack} variant="ghost" className="mb-6">
+        <Button onClick={onBack} variant="ghost" className="mb-6 hover:scale-105 transition-transform">
           <ArrowLeft className="mr-2 w-4 h-4" />
           Back
         </Button>
 
-        <Card className="p-8 border-border">
+        <Card className="p-8 border-border shadow-lg backdrop-blur-sm bg-card/95 animate-in slide-in-from-bottom duration-500">
           <div className="mb-8">
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-lg font-semibold text-card-foreground">
                 Task {currentTask + 1} of {tasks.length}
               </h3>
-              <span className="text-sm px-3 py-1 bg-primary/10 text-primary rounded-full font-medium">
+              <span className="text-sm px-4 py-2 bg-primary/10 text-primary rounded-full font-medium animate-in zoom-in duration-300">
                 {tasks[currentTask].type}
               </span>
             </div>
-            <Progress value={progress} className="h-2" />
+            <Progress value={progress} className="h-2 transition-all duration-500" />
           </div>
 
-          <h2 className="text-2xl font-bold mb-8 text-card-foreground">
+          <h2 className="text-2xl font-bold mb-8 text-card-foreground animate-in slide-in-from-top duration-500">
             {tasks[currentTask].question}
           </h2>
 
@@ -226,7 +226,8 @@ const AdolescentAssessment = ({ onBack }: Props) => {
                 size="lg"
                 variant={selectedAnswer === index ? (index === tasks[currentTask].correct ? "default" : "destructive") : "outline"}
                 disabled={selectedAnswer !== null}
-                className="justify-start text-left h-auto py-4 transition-all"
+                className="justify-start text-left h-auto py-5 hover:scale-[1.02] active:scale-95 transition-all duration-200 hover:shadow-md animate-in slide-in-from-bottom"
+                style={{ animationDelay: `${index * 50}ms` }}
               >
                 {option}
               </Button>
