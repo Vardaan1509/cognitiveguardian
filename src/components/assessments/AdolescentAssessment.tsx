@@ -78,6 +78,108 @@ const AdolescentAssessment = ({ onBack }: Props) => {
       options: ["Amazon", "Africa", "Nile", "Pacific"],
       correct: 1,
     },
+    {
+      type: "direction",
+      question: "Which direction does this arrow point? ➡️",
+      options: ["Up", "Down", "Left", "Right"],
+      correct: 3,
+    },
+    {
+      type: "direction",
+      question: "Which direction does this arrow point? ⬆️",
+      options: ["Up", "Down", "Left", "Right"],
+      correct: 0,
+    },
+    {
+      type: "direction",
+      question: "Which direction is OPPOSITE to where this arrow points? ⬇️",
+      options: ["Up", "Down", "Left", "Right"],
+      correct: 0,
+    },
+    {
+      type: "direction",
+      question: "Which direction is OPPOSITE to where this arrow points? ⬅️",
+      options: ["Up", "Down", "Left", "Right"],
+      correct: 3,
+    },
+    {
+      type: "counting",
+      question: "Count the X's: A X B C X D E X F G X H",
+      options: ["3", "4", "5", "6"],
+      correct: 1,
+    },
+    {
+      type: "counting",
+      question: "Count the X's: X M N X O P Q X R X S T",
+      options: ["3", "4", "5", "6"],
+      correct: 1,
+    },
+    {
+      type: "memory",
+      question: "Remember these words: TREE, PHONE, BOOK, CLOUD, MUSIC. Which word was third?",
+      options: ["TREE", "BOOK", "CLOUD", "MUSIC"],
+      correct: 1,
+    },
+    {
+      type: "memory",
+      question: "Remember these words: OCEAN, RIVER, MOUNTAIN, DESERT, FOREST. Which word was first?",
+      options: ["OCEAN", "RIVER", "MOUNTAIN", "FOREST"],
+      correct: 0,
+    },
+    {
+      type: "categorization",
+      question: "Which item doesn't belong: Cat, Dog, Bird, Apple",
+      options: ["Cat", "Dog", "Bird", "Apple"],
+      correct: 3,
+    },
+    {
+      type: "categorization",
+      question: "Which item doesn't belong: Car, Bicycle, Train, Chair",
+      options: ["Car", "Bicycle", "Train", "Chair"],
+      correct: 3,
+    },
+    {
+      type: "stroop",
+      question: "What COLOR is this text written in? (Ignore what it says): BLUE",
+      options: ["Red", "Blue", "Green", "Yellow"],
+      correct: 0,
+    },
+    {
+      type: "stroop",
+      question: "What COLOR is this text written in? (Ignore what it says): RED",
+      options: ["Red", "Blue", "Green", "Yellow"],
+      correct: 1,
+    },
+    {
+      type: "orientation",
+      question: "What month is it right now?",
+      options: ["January", "March", "November", "Depends on when you take this"],
+      correct: 3,
+    },
+    {
+      type: "orientation",
+      question: "What year is it?",
+      options: ["2023", "2024", "2025", "2026"],
+      correct: 2,
+    },
+    {
+      type: "orientation",
+      question: "What day of the week is today?",
+      options: ["Monday", "Tuesday", "Depends on when you take this", "Friday"],
+      correct: 2,
+    },
+    {
+      type: "logic",
+      question: "If the day before yesterday was Monday, what day is today?",
+      options: ["Tuesday", "Wednesday", "Thursday", "Friday"],
+      correct: 1,
+    },
+    {
+      type: "logic",
+      question: "If tomorrow is Friday, what day was yesterday?",
+      options: ["Tuesday", "Wednesday", "Thursday", "Friday"],
+      correct: 1,
+    },
   ];
 
   const [tasks] = useState(() => {

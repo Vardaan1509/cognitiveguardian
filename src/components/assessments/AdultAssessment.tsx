@@ -60,6 +60,108 @@ const AdultAssessment = ({ onBack }: Props) => {
       options: ["Sell medicine", "Help people stay healthy", "Drive ambulances", "Cook food"],
       correct: 1,
     },
+    {
+      type: "Direction",
+      question: "In which direction does this arrow point? ➡️",
+      options: ["Up", "Down", "Left", "Right"],
+      correct: 3,
+    },
+    {
+      type: "Direction",
+      question: "In which direction does this arrow point? ⬆️",
+      options: ["Up", "Down", "Left", "Right"],
+      correct: 0,
+    },
+    {
+      type: "Direction",
+      question: "What direction is OPPOSITE to where this arrow points? ⬇️",
+      options: ["Up", "Down", "Left", "Right"],
+      correct: 0,
+    },
+    {
+      type: "Direction",
+      question: "What direction is OPPOSITE to where this arrow points? ⬅️",
+      options: ["Up", "Down", "Left", "Right"],
+      correct: 3,
+    },
+    {
+      type: "Counting",
+      question: "Count the number of X's in this text: P X Q R X S T X U V X W",
+      options: ["3", "4", "5", "6"],
+      correct: 1,
+    },
+    {
+      type: "Counting",
+      question: "Count the number of X's in this text: X A X B C X D X E F X",
+      options: ["4", "5", "6", "7"],
+      correct: 1,
+    },
+    {
+      type: "Memory",
+      question: "Study these 5 words: CHAIR, WINDOW, COFFEE, LAPTOP, GARDEN. Which word was in the middle (3rd)?",
+      options: ["CHAIR", "WINDOW", "COFFEE", "LAPTOP"],
+      correct: 2,
+    },
+    {
+      type: "Memory",
+      question: "Study these 5 words: RIVER, BRIDGE, MOUNTAIN, VALLEY, FOREST. Which word was first?",
+      options: ["RIVER", "BRIDGE", "MOUNTAIN", "VALLEY"],
+      correct: 0,
+    },
+    {
+      type: "Categorization",
+      question: "Which item doesn't belong in this group: Hammer, Screwdriver, Wrench, Apple",
+      options: ["Hammer", "Screwdriver", "Wrench", "Apple"],
+      correct: 3,
+    },
+    {
+      type: "Categorization",
+      question: "Which item doesn't belong in this group: Soccer, Basketball, Tennis, Microscope",
+      options: ["Soccer", "Basketball", "Tennis", "Microscope"],
+      correct: 3,
+    },
+    {
+      type: "Stroop",
+      question: "What COLOR is this text written in? (Ignore the word itself): BLUE (written in red)",
+      options: ["Red", "Blue", "Green", "Yellow"],
+      correct: 0,
+    },
+    {
+      type: "Stroop",
+      question: "What COLOR is this text written in? (Ignore the word itself): GREEN (written in yellow)",
+      options: ["Red", "Blue", "Green", "Yellow"],
+      correct: 3,
+    },
+    {
+      type: "Orientation",
+      question: "What month is it currently?",
+      options: ["January", "March", "November", "Check your calendar"],
+      correct: 3,
+    },
+    {
+      type: "Orientation",
+      question: "What year are we in?",
+      options: ["2023", "2024", "2025", "2026"],
+      correct: 2,
+    },
+    {
+      type: "Orientation",
+      question: "What day of the week is it today?",
+      options: ["Monday", "It varies", "Friday", "Sunday"],
+      correct: 1,
+    },
+    {
+      type: "Logic",
+      question: "If the day before yesterday was Monday, what day is today?",
+      options: ["Tuesday", "Wednesday", "Thursday", "Friday"],
+      correct: 1,
+    },
+    {
+      type: "Logic",
+      question: "If tomorrow will be Saturday, what day was the day before yesterday?",
+      options: ["Tuesday", "Wednesday", "Thursday", "Friday"],
+      correct: 1,
+    },
   ];
 
   const [questions] = useState(() => {

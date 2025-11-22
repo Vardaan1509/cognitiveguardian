@@ -78,6 +78,90 @@ const YouthAssessment = ({ onBack }: Props) => {
       correct: 0,
       emoji: "🌻",
     },
+    {
+      question: "Which way is the arrow pointing? ➡️",
+      options: ["Up", "Down", "Left", "Right"],
+      correct: 3,
+      emoji: "➡️",
+    },
+    {
+      question: "Which way is the arrow pointing? ⬆️",
+      options: ["Up", "Down", "Left", "Right"],
+      correct: 0,
+      emoji: "⬆️",
+    },
+    {
+      question: "Which way is OPPOSITE to the arrow? ⬇️",
+      options: ["Up", "Down", "Left", "Right"],
+      correct: 0,
+      emoji: "🔄",
+    },
+    {
+      question: "Count the X's: X B X D X F",
+      options: ["2", "3", "4", "5"],
+      correct: 1,
+      emoji: "🔢",
+    },
+    {
+      question: "Count the X's: A X C X E X G X",
+      options: ["3", "4", "5", "6"],
+      correct: 1,
+      emoji: "🔢",
+    },
+    {
+      question: "Remember: CAT, DOG, FISH, BIRD, BEAR. Which was third?",
+      options: ["CAT", "DOG", "FISH", "BIRD"],
+      correct: 2,
+      emoji: "🧠",
+    },
+    {
+      question: "Remember: SUN, MOON, STAR, CLOUD, RAIN. Which was first?",
+      options: ["SUN", "MOON", "STAR", "CLOUD"],
+      correct: 0,
+      emoji: "🧠",
+    },
+    {
+      question: "Which doesn't belong: Apple, Banana, Car, Orange?",
+      options: ["Apple", "Banana", "Car", "Orange"],
+      correct: 2,
+      emoji: "🤔",
+    },
+    {
+      question: "Which doesn't belong: Red, Blue, Happy, Green?",
+      options: ["Red", "Blue", "Happy", "Green"],
+      correct: 2,
+      emoji: "🤔",
+    },
+    {
+      question: "What COLOR is written here? RED (in blue)",
+      options: ["Red", "Blue", "Green", "Yellow"],
+      correct: 1,
+      emoji: "🎨",
+    },
+    {
+      question: "What COLOR is written here? GREEN (in red)",
+      options: ["Red", "Blue", "Green", "Yellow"],
+      correct: 0,
+      emoji: "🎨",
+    },
+    {
+      question: "What month is it right now?",
+      options: ["Check the calendar!", "January", "December", "It changes!"],
+      correct: 3,
+      emoji: "📆",
+    },
+    {
+      question: "What year is it?",
+      options: ["2023", "2024", "2025", "2026"],
+      correct: 2,
+      emoji: "📆",
+    },
+    {
+      question: "If yesterday was Monday, what is today?",
+      options: ["Sunday", "Monday", "Tuesday", "Wednesday"],
+      correct: 2,
+      emoji: "📅",
+    },
   ];
 
   const [questions] = useState(() => {
