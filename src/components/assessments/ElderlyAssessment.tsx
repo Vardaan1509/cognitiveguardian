@@ -209,37 +209,37 @@ const ElderlyAssessment = ({ onBack }: Props) => {
   const current = exercises[currentExercise];
 
   return (
-    <div className="container mx-auto px-4 py-12">
+    <div className="container mx-auto px-4 py-12 animate-in fade-in duration-500">
       <div className="max-w-2xl mx-auto">
-        <Button onClick={onBack} variant="ghost" className="mb-6">
+        <Button onClick={onBack} variant="ghost" className="mb-6 hover:scale-105 transition-transform">
           <ArrowLeft className="mr-2 w-4 h-4" />
           Back
         </Button>
 
-        <Card className="p-8 border-border">
+        <Card className="p-8 border-border shadow-lg backdrop-blur-sm bg-card/95 animate-in slide-in-from-bottom duration-500">
           <div className="mb-8">
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-lg font-semibold text-card-foreground">
                 Exercise {currentExercise + 1} of {exercises.length}
               </h3>
-              <span className="text-sm px-3 py-1 bg-secondary/10 text-secondary rounded-full font-medium">
+              <span className="text-sm px-4 py-2 bg-secondary/10 text-secondary rounded-full font-medium animate-in zoom-in duration-300">
                 {current.type}
               </span>
             </div>
-            <Progress value={progress} className="h-2" />
+            <Progress value={progress} className="h-2 transition-all duration-500" />
           </div>
 
           <div className="mb-8">
-          <h2 className="text-2xl font-bold mb-8 text-card-foreground">
+          <h2 className="text-2xl font-bold mb-8 text-card-foreground animate-in slide-in-from-top duration-500">
             {current.question}
           </h2>
 
           {current.isMemoryIntro && (
-            <div className="space-y-6">
-              <p className="text-lg text-muted-foreground text-center p-8 bg-secondary/5 rounded-lg">
+            <div className="space-y-6 animate-in zoom-in duration-500">
+              <p className="text-lg text-muted-foreground text-center p-8 bg-secondary/5 rounded-lg border border-secondary/10">
                 Please take a moment to remember these words.
               </p>
-              <Button onClick={handleNext} size="lg" className="w-full">
+              <Button onClick={handleNext} size="lg" className="w-full hover:scale-[1.02] active:scale-95 transition-all">
                 Continue
               </Button>
             </div>
@@ -260,7 +260,8 @@ const ElderlyAssessment = ({ onBack }: Props) => {
                       : "outline"
                   }
                   disabled={selectedAnswer !== null}
-                  className="justify-start text-left h-auto py-4 transition-all"
+                  className="justify-start text-left h-auto py-5 hover:scale-[1.02] active:scale-95 transition-all duration-200 hover:shadow-md animate-in slide-in-from-bottom"
+                  style={{ animationDelay: `${index * 50}ms` }}
                 >
                   {option}
                 </Button>
@@ -269,17 +270,17 @@ const ElderlyAssessment = ({ onBack }: Props) => {
           )}
 
           {current.isOpenEnded && (
-            <div className="space-y-4">
+            <div className="space-y-4 animate-in zoom-in duration-500">
               <Textarea
                 value={textResponse}
                 onChange={(e) => setTextResponse(e.target.value)}
                 placeholder="Type your answer here..."
-                className="min-h-[120px]"
+                className="min-h-[120px] transition-all duration-200 focus:shadow-md"
               />
               <Button
                 onClick={handleOpenEnded}
                 size="lg"
-                className="w-full"
+                className="w-full hover:scale-[1.02] active:scale-95 transition-all"
                 disabled={!textResponse.trim()}
               >
                 Continue

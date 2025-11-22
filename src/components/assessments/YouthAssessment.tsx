@@ -201,26 +201,26 @@ const YouthAssessment = ({ onBack }: Props) => {
   }
 
   return (
-    <div className="container mx-auto px-4 py-12">
+    <div className="container mx-auto px-4 py-12 animate-in fade-in duration-500">
       <div className="max-w-2xl mx-auto">
-        <Button onClick={onBack} variant="ghost" className="mb-6">
+        <Button onClick={onBack} variant="ghost" className="mb-6 hover:scale-105 transition-transform">
           <ArrowLeft className="mr-2 w-4 h-4" />
           Back
         </Button>
 
-        <Card className="p-8 border-2 border-primary/20">
+        <Card className="p-8 border-2 border-primary/20 shadow-lg backdrop-blur-sm bg-card/95 animate-in slide-in-from-bottom duration-500">
           <div className="mb-8">
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-lg font-semibold text-card-foreground">
                 Question {currentQuestion + 1} of {questions.length}
               </h3>
-              <span className="text-4xl">{questions[currentQuestion].emoji}</span>
+              <span className="text-5xl animate-in zoom-in duration-300">{questions[currentQuestion].emoji}</span>
             </div>
-            <Progress value={progress} className="mb-4 h-3" />
+            <Progress value={progress} className="mb-4 h-3 transition-all duration-500" />
           </div>
 
           <div className="mb-8">
-            <h2 className="text-3xl font-bold text-center mb-8 text-card-foreground">
+            <h2 className="text-3xl font-bold text-center mb-10 text-card-foreground animate-in slide-in-from-top duration-500">
               {questions[currentQuestion].question}
             </h2>
 
@@ -231,7 +231,8 @@ const YouthAssessment = ({ onBack }: Props) => {
                   onClick={() => handleAnswer(index)}
                   size="lg"
                   variant="outline"
-                  className="h-24 text-xl font-semibold hover:scale-105 transition-transform border-2 hover:border-primary"
+                  className="h-24 text-xl font-semibold hover:scale-105 active:scale-95 transition-all duration-200 border-2 hover:border-primary hover:shadow-lg hover:bg-primary/5 animate-in slide-in-from-bottom duration-300"
+                  style={{ animationDelay: `${index * 50}ms` }}
                 >
                   {option}
                 </Button>
