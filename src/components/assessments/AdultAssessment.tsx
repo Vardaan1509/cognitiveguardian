@@ -122,13 +122,17 @@ const AdultAssessment = ({ onBack }: Props) => {
     },
     {
       type: "Stroop",
-      question: "What COLOR is this text written in? (Ignore the word itself): BLUE (written in red)",
+      question: "What COLOR is this text written in? (Ignore the word itself):",
+      coloredWord: "BLUE",
+      textColor: "#ef4444",
       options: ["Red", "Blue", "Green", "Yellow"],
       correct: 0,
     },
     {
       type: "Stroop",
-      question: "What COLOR is this text written in? (Ignore the word itself): GREEN (written in yellow)",
+      question: "What COLOR is this text written in? (Ignore the word itself):",
+      coloredWord: "GREEN",
+      textColor: "#eab308",
       options: ["Red", "Blue", "Green", "Yellow"],
       correct: 3,
     },
@@ -346,6 +350,11 @@ const AdultAssessment = ({ onBack }: Props) => {
 
           <h2 className="text-2xl font-bold mb-8 text-card-foreground animate-in slide-in-from-top duration-500">
             {questions[currentQuestion].question}
+            {questions[currentQuestion].coloredWord && (
+              <span className="ml-3 text-4xl font-extrabold" style={{ color: questions[currentQuestion].textColor }}>
+                {questions[currentQuestion].coloredWord}
+              </span>
+            )}
           </h2>
 
           <div className="grid gap-4">

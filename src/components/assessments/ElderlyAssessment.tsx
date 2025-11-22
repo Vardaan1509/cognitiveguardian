@@ -143,14 +143,18 @@ const ElderlyAssessment = ({ onBack }: Props) => {
     },
     {
       type: "Color Recognition",
-      question: "What COLOR is this word written in? (Don't read the word): BLUE (shown in red)",
+      question: "What COLOR is this word written in? (Don't read the word):",
+      coloredWord: "BLUE",
+      textColor: "#ef4444",
       options: ["Red", "Blue", "Green", "Yellow"],
       correct: 0,
       isMultiChoice: true,
     },
     {
       type: "Color Recognition",
-      question: "What COLOR is this word written in? (Don't read the word): GREEN (shown in blue)",
+      question: "What COLOR is this word written in? (Don't read the word):",
+      coloredWord: "GREEN",
+      textColor: "#3b82f6",
       options: ["Red", "Blue", "Green", "Yellow"],
       correct: 1,
       isMultiChoice: true,
@@ -397,6 +401,11 @@ const ElderlyAssessment = ({ onBack }: Props) => {
           <div className="mb-8">
           <h2 className="text-2xl font-bold mb-8 text-card-foreground animate-in slide-in-from-top duration-500">
             {current.question}
+            {current.coloredWord && (
+              <span className="ml-3 text-4xl font-extrabold" style={{ color: current.textColor }}>
+                {current.coloredWord}
+              </span>
+            )}
           </h2>
 
           {current.isMemoryIntro && (
