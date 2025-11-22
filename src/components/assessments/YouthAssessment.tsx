@@ -19,254 +19,164 @@ const YouthAssessment = ({ onBack }: Props) => {
   const [score, setScore] = useState(0);
   const [completed, setCompleted] = useState(false);
   const [saving, setSaving] = useState(false);
-  const [timeLeft, setTimeLeft] = useState(20);
+  const [timeLeft, setTimeLeft] = useState(15);
   const [answering, setAnswering] = useState(false);
-  const [categoryScores, setCategoryScores] = useState<Record<string, { correct: number; total: number }>>({});
   const { toast } = useToast();
 
   const allQuestions = [
     {
-      type: "Knowledge",
-      difficulty: "easy",
       question: "Which color is the sky?",
       options: ["Red", "Blue", "Green", "Yellow"],
       correct: 1,
       emoji: "🌤️",
-      timeLimit: 15,
     },
     {
-      type: "Counting",
-      difficulty: "easy",
       question: "Count the stars! ⭐⭐⭐",
       options: ["2", "3", "4", "5"],
       correct: 1,
       emoji: "⭐",
-      timeLimit: 15,
     },
     {
-      type: "Knowledge",
-      difficulty: "easy",
       question: "Which animal says 'Moo'?",
       options: ["Dog", "Cow", "Cat", "Bird"],
       correct: 1,
       emoji: "🐮",
-      timeLimit: 12,
     },
     {
-      type: "Knowledge",
-      difficulty: "easy",
       question: "What day of the week comes after Tuesday?",
       options: ["Monday", "Wednesday", "Friday", "Sunday"],
       correct: 1,
       emoji: "📅",
-      timeLimit: 15,
     },
     {
-      type: "Knowledge",
-      difficulty: "easy",
       question: "Which of these is NOT a fruit?",
       options: ["Banana", "Carrot", "Orange", "Grape"],
       correct: 1,
       emoji: "🥕",
-      timeLimit: 12,
     },
     {
-      type: "Knowledge",
-      difficulty: "easy",
       question: "How many legs do most insects have?",
       options: ["Four", "Six", "Eight", "Ten"],
       correct: 1,
       emoji: "🐛",
-      timeLimit: 15,
     },
     {
-      type: "Knowledge",
-      difficulty: "easy",
       question: "What is the color of grass?",
       options: ["Blue", "Green", "Red", "Yellow"],
       correct: 1,
       emoji: "🌱",
-      timeLimit: 10,
     },
     {
-      type: "Knowledge",
-      difficulty: "easy",
       question: "Which animal is known as 'man's best friend'?",
       options: ["Cat", "Dog", "Bird", "Fish"],
       correct: 1,
       emoji: "🐕",
-      timeLimit: 12,
     },
     {
-      type: "Knowledge",
-      difficulty: "easy",
       question: "What do plants need to grow?",
       options: ["Sunlight and water", "Sugar and salt", "Sand and toys", "Cold and dark"],
       correct: 0,
       emoji: "🌻",
-      timeLimit: 15,
     },
     {
-      type: "Direction",
-      difficulty: "easy",
       question: "Which way is the arrow pointing? ➡️",
       options: ["Up", "Down", "Left", "Right"],
       correct: 3,
       emoji: "➡️",
-      timeLimit: 10,
     },
     {
-      type: "Direction",
-      difficulty: "easy",
       question: "Which way is the arrow pointing? ⬆️",
       options: ["Up", "Down", "Left", "Right"],
       correct: 0,
       emoji: "⬆️",
-      timeLimit: 10,
     },
     {
-      type: "Direction",
-      difficulty: "medium",
       question: "Which way is OPPOSITE to the arrow? ⬇️",
       options: ["Up", "Down", "Left", "Right"],
       correct: 0,
       emoji: "🔄",
-      timeLimit: 15,
     },
     {
-      type: "Counting",
-      difficulty: "medium",
       question: "Count the X's: X B X D X F",
       options: ["2", "3", "4", "5"],
       correct: 1,
       emoji: "🔢",
-      timeLimit: 20,
     },
     {
-      type: "Counting",
-      difficulty: "medium",
       question: "Count the X's: A X C X E X G X",
       options: ["3", "4", "5", "6"],
       correct: 1,
       emoji: "🔢",
-      timeLimit: 20,
     },
     {
-      type: "Memory",
-      difficulty: "hard",
       question: "Remember: CAT, DOG, FISH, BIRD, BEAR. Which was third?",
       options: ["CAT", "DOG", "FISH", "BIRD"],
       correct: 2,
       emoji: "🧠",
-      timeLimit: 25,
     },
     {
-      type: "Memory",
-      difficulty: "medium",
       question: "Remember: SUN, MOON, STAR, CLOUD, RAIN. Which was first?",
       options: ["SUN", "MOON", "STAR", "CLOUD"],
       correct: 0,
       emoji: "🧠",
-      timeLimit: 20,
     },
     {
-      type: "Categorization",
-      difficulty: "medium",
       question: "Which doesn't belong: Apple, Banana, Car, Orange?",
       options: ["Apple", "Banana", "Car", "Orange"],
       correct: 2,
       emoji: "🤔",
-      timeLimit: 18,
     },
     {
-      type: "Categorization",
-      difficulty: "medium",
       question: "Which doesn't belong: Red, Blue, Happy, Green?",
       options: ["Red", "Blue", "Happy", "Green"],
       correct: 2,
       emoji: "🤔",
-      timeLimit: 18,
     },
     {
-      type: "Stroop",
-      difficulty: "hard",
       question: "What COLOR is this word?",
       coloredWord: "RED",
       textColor: "#3b82f6",
       options: ["Red", "Blue", "Green", "Yellow"],
       correct: 1,
       emoji: "🎨",
-      timeLimit: 15,
     },
     {
-      type: "Stroop",
-      difficulty: "hard",
       question: "What COLOR is this word?",
       coloredWord: "GREEN",
       textColor: "#ef4444",
       options: ["Red", "Blue", "Green", "Yellow"],
       correct: 0,
       emoji: "🎨",
-      timeLimit: 15,
     },
     {
-      type: "Orientation",
-      difficulty: "easy",
       question: "What month is it right now?",
       options: ["Check the calendar!", "January", "December", "It changes!"],
       correct: 3,
       emoji: "📆",
-      timeLimit: 15,
     },
     {
-      type: "Orientation",
-      difficulty: "easy",
       question: "What year is it?",
       options: ["2023", "2024", "2025", "2026"],
       correct: 2,
       emoji: "📆",
-      timeLimit: 15,
     },
     {
-      type: "Logic",
-      difficulty: "medium",
       question: "If yesterday was Monday, what is today?",
       options: ["Sunday", "Monday", "Tuesday", "Wednesday"],
       correct: 2,
       emoji: "📅",
-      timeLimit: 20,
     },
   ];
 
   const [questions] = useState(() => {
-    const categories = [...new Set(allQuestions.filter(q => q.type).map(q => q.type))];
-    const selectedQuestions = [];
-    
-    // Ensure diversity: pick at least one question from different categories
-    const questionsPerCategory = Math.floor(5 / Math.min(categories.length, 5));
-    
-    for (let i = 0; i < categories.length && selectedQuestions.length < 5; i++) {
-      const categoryQuestions = allQuestions.filter(q => q.type === categories[i]);
-      const shuffled = [...categoryQuestions].sort(() => Math.random() - 0.5);
-      selectedQuestions.push(...shuffled.slice(0, questionsPerCategory || 1));
-    }
-    
-    // If we still need more questions, add random ones
-    if (selectedQuestions.length < 5) {
-      const remaining = allQuestions
-        .filter(q => !selectedQuestions.includes(q))
-        .sort(() => Math.random() - 0.5);
-      selectedQuestions.push(...remaining.slice(0, 5 - selectedQuestions.length));
-    }
-    
-    return selectedQuestions.sort(() => Math.random() - 0.5).slice(0, 5);
+    const shuffled = [...allQuestions].sort(() => Math.random() - 0.5);
+    return shuffled.slice(0, 5);
   });
 
   useEffect(() => {
     if (completed || !patientName || answering) return;
 
-    const currentTimeLimit = questions[currentQuestion]?.timeLimit || 15;
-    setTimeLeft(currentTimeLimit);
+    setTimeLeft(15);
     
     const timer = setInterval(() => {
       setTimeLeft((prev) => {
@@ -358,22 +268,8 @@ const YouthAssessment = ({ onBack }: Props) => {
 
   const handleAnswer = (index: number) => {
     setAnswering(true);
-    const currentQ = questions[currentQuestion];
-    const isCorrect = index === currentQ.correct;
-    
-    if (isCorrect) {
+    if (index === questions[currentQuestion].correct) {
       setScore(score + 1);
-    }
-    
-    // Track category performance
-    if (currentQ.type) {
-      setCategoryScores(prev => ({
-        ...prev,
-        [currentQ.type!]: {
-          correct: (prev[currentQ.type!]?.correct || 0) + (isCorrect ? 1 : 0),
-          total: (prev[currentQ.type!]?.total || 0) + 1
-        }
-      }));
     }
 
     setTimeout(() => {
@@ -401,70 +297,35 @@ const YouthAssessment = ({ onBack }: Props) => {
   if (completed) {
     return (
       <div className="container mx-auto px-4 py-12">
-        <div className="max-w-3xl mx-auto">
-          <Card className="p-8 border-border shadow-lg">
-            <div className="text-center mb-8">
-              <div className="w-24 h-24 rounded-full bg-gradient-to-br from-pink-400 to-purple-500 flex items-center justify-center mx-auto mb-4">
-                <Sparkles className="w-12 h-12 text-white" />
-              </div>
-              <h2 className="text-4xl font-bold mb-4 text-foreground">Great Job, {patientName}! 🎉</h2>
-              <p className="text-xl text-muted-foreground mb-2">
-                You got {score} out of {questions.length} correct!
-              </p>
-              <p className="text-3xl font-bold text-primary mb-6">
-                {Math.round((score / questions.length) * 100)}%
-              </p>
+        <div className="max-w-2xl mx-auto text-center">
+          <div className="mb-8">
+            <div className="w-24 h-24 rounded-full bg-gradient-to-br from-pink-400 to-purple-500 flex items-center justify-center mx-auto mb-4">
+              <Sparkles className="w-12 h-12 text-white" />
             </div>
-
-            {Object.keys(categoryScores).length > 0 && (
-              <div className="mb-8">
-                <h3 className="text-lg font-semibold mb-4 text-foreground">Your Performance</h3>
-                <div className="grid gap-3">
-                  {Object.entries(categoryScores).map(([category, scores]) => {
-                    const percentage = Math.round((scores.correct / scores.total) * 100);
-                    return (
-                      <div key={category} className="flex items-center gap-4 p-4 rounded-lg bg-muted/50">
-                        <div className="flex-1">
-                          <div className="flex justify-between mb-2">
-                            <span className="font-medium text-foreground">{category}</span>
-                            <span className="text-sm text-muted-foreground">
-                              {scores.correct}/{scores.total}
-                            </span>
-                          </div>
-                          <Progress value={percentage} className="h-2" />
-                        </div>
-                        <span className={`text-lg font-bold ${percentage >= 70 ? 'text-primary' : 'text-muted-foreground'}`}>
-                          {percentage}%
-                        </span>
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
-            )}
-
-            <div className="flex items-center justify-center gap-2 mb-6">
-              {Array.from({ length: questions.length }).map((_, i) => (
-                <Star
-                  key={i}
-                  className={i < score ? "w-8 h-8 fill-yellow-400 text-yellow-400" : "w-8 h-8 text-muted"}
-                />
-              ))}
-            </div>
-
+            <h2 className="text-4xl font-bold mb-4 text-foreground">Great Job, {patientName}! 🎉</h2>
+            <p className="text-xl text-muted-foreground mb-6">
+              You got {score} out of {questions.length} correct!
+            </p>
             {saving && (
-              <p className="text-sm text-muted-foreground mb-4 text-center">
+              <p className="text-sm text-muted-foreground mb-4">
                 Saving results...
               </p>
             )}
-            
-            <div className="text-center">
-              <Button onClick={onBack} size="lg">
-                <ArrowLeft className="mr-2 w-4 h-4" />
-                Back to Start
-              </Button>
+            <div className="flex items-center justify-center gap-2 mb-8">
+              {Array.from({ length: questions.length }).map((_, i) => (
+                <Star
+                  key={i}
+                  className={`w-8 h-8 ${
+                    i < score ? "text-yellow-400 fill-yellow-400" : "text-gray-300"
+                  }`}
+                />
+              ))}
             </div>
-          </Card>
+          </div>
+          <Button onClick={onBack} size="lg">
+            <ArrowLeft className="mr-2 w-4 h-4" />
+            Back to Age Selection
+          </Button>
         </div>
       </div>
     );

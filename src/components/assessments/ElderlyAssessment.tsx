@@ -22,17 +22,14 @@ const ElderlyAssessment = ({ onBack }: Props) => {
   const [textResponse, setTextResponse] = useState("");
   const [completed, setCompleted] = useState(false);
   const [saving, setSaving] = useState(false);
-  const [timeLeft, setTimeLeft] = useState(20);
-  const [categoryScores, setCategoryScores] = useState<Record<string, { correct: number; total: number }>>({});
+  const [timeLeft, setTimeLeft] = useState(15);
   const { toast } = useToast();
 
   const allExercises = [
     {
       type: "Memory Introduction",
-      difficulty: "easy",
       question: "Please remember these three words: Apple, Table, Car. We'll ask you to recall them later.",
       isMemoryIntro: true,
-      timeLimit: 20,
     },
     {
       type: "Orientation",
@@ -200,27 +197,7 @@ const ElderlyAssessment = ({ onBack }: Props) => {
   ];
 
   const [exercises] = useState(() => {
-    const categories = [...new Set(allExercises.map(e => e.type))];
-    const selectedExercises = [];
-    
-    // Ensure diversity: pick exercises from different categories
-    const exercisesPerCategory = Math.floor(5 / Math.min(categories.length, 5));
-    
-    for (let i = 0; i < categories.length && selectedExercises.length < 5; i++) {
-      const categoryExercises = allExercises.filter(e => e.type === categories[i]);
-      const shuffled = [...categoryExercises].sort(() => Math.random() - 0.5);
-      selectedExercises.push(...shuffled.slice(0, exercisesPerCategory || 1));
-    }
-    
-    // If we still need more exercises, add random ones
-    if (selectedExercises.length < 5) {
-      const remaining = allExercises
-        .filter(e => !selectedExercises.includes(e))
-        .sort(() => Math.random() - 0.5);
-      selectedExercises.push(...remaining.slice(0, 5 - selectedExercises.length));
-    }
-    
-    const shuffled = selectedExercises.sort(() => Math.random() - 0.5).slice(0, 5);
+    const shuffled = [...allExercises].sort(() => Math.random() - 0.5);
     return shuffled.slice(0, 5);
   });
 
