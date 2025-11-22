@@ -140,13 +140,17 @@ const AdolescentAssessment = ({ onBack }: Props) => {
     },
     {
       type: "stroop",
-      question: "What COLOR is this text written in? (Ignore what it says): BLUE",
+      question: "What COLOR is this text written in? (Ignore what it says):",
+      coloredWord: "BLUE",
+      textColor: "#ef4444",
       options: ["Red", "Blue", "Green", "Yellow"],
       correct: 0,
     },
     {
       type: "stroop",
-      question: "What COLOR is this text written in? (Ignore what it says): RED",
+      question: "What COLOR is this text written in? (Ignore what it says):",
+      coloredWord: "RED",
+      textColor: "#3b82f6",
       options: ["Red", "Blue", "Green", "Yellow"],
       correct: 1,
     },
@@ -364,6 +368,11 @@ const AdolescentAssessment = ({ onBack }: Props) => {
 
           <h2 className="text-2xl font-bold mb-8 text-card-foreground animate-in slide-in-from-top duration-500">
             {tasks[currentTask].question}
+            {tasks[currentTask].coloredWord && (
+              <span className="ml-3 text-4xl font-extrabold" style={{ color: tasks[currentTask].textColor }}>
+                {tasks[currentTask].coloredWord}
+              </span>
+            )}
           </h2>
 
           <div className="grid gap-4">

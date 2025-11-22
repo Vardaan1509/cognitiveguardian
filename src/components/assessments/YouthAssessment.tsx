@@ -133,13 +133,17 @@ const YouthAssessment = ({ onBack }: Props) => {
       emoji: "🤔",
     },
     {
-      question: "What COLOR is written here? RED (in blue)",
+      question: "What COLOR is this word?",
+      coloredWord: "RED",
+      textColor: "#3b82f6",
       options: ["Red", "Blue", "Green", "Yellow"],
       correct: 1,
       emoji: "🎨",
     },
     {
-      question: "What COLOR is written here? GREEN (in red)",
+      question: "What COLOR is this word?",
+      coloredWord: "GREEN",
+      textColor: "#ef4444",
       options: ["Red", "Blue", "Green", "Yellow"],
       correct: 0,
       emoji: "🎨",
@@ -357,6 +361,11 @@ const YouthAssessment = ({ onBack }: Props) => {
           <div className="mb-8">
             <h2 className="text-3xl font-bold text-center mb-10 text-card-foreground animate-in slide-in-from-top duration-500">
               {questions[currentQuestion].question}
+              {questions[currentQuestion].coloredWord && (
+                <span className="ml-3 text-5xl font-extrabold" style={{ color: questions[currentQuestion].textColor }}>
+                  {questions[currentQuestion].coloredWord}
+                </span>
+              )}
             </h2>
 
             <div className="grid grid-cols-2 gap-4">
