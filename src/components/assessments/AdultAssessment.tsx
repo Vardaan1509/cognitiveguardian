@@ -20,163 +20,232 @@ const AdultAssessment = ({ onBack }: Props) => {
   const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
   const [completed, setCompleted] = useState(false);
   const [saving, setSaving] = useState(false);
-  const [timeLeft, setTimeLeft] = useState(15);
+  const [timeLeft, setTimeLeft] = useState(20);
+  const [categoryScores, setCategoryScores] = useState<Record<string, { correct: number; total: number }>>({});
   const { toast } = useToast();
 
   const allQuestions = [
     {
       type: "Math",
+      difficulty: "medium",
       question: "Which of the following is a prime number?",
       options: ["21", "29", "30", "35"],
       correct: 1,
+      timeLimit: 20,
     },
     {
       type: "Math",
+      difficulty: "hard",
       question: "If a train travels 60 miles in 1 hour and 30 minutes, what is its average speed?",
       options: ["40 mph", "45 mph", "50 mph", "55 mph"],
       correct: 0,
+      timeLimit: 30,
     },
     {
       type: "Pattern",
+      difficulty: "medium",
       question: "What is the next number in this sequence? 3, 6, 12, 24, ...",
       options: ["36", "48", "54", "60"],
       correct: 1,
+      timeLimit: 25,
     },
     {
       type: "Practical",
+      difficulty: "easy",
       question: "Which item would you use to cut paper?",
       options: ["Scissors", "Spoon", "Fork", "Hammer"],
       correct: 0,
+      timeLimit: 15,
     },
     {
       type: "Safety",
+      difficulty: "easy",
       question: "If you hear a fire alarm, what should you do?",
       options: ["Ignore it", "Evacuate calmly", "Continue working", "Call a friend"],
       correct: 1,
+      timeLimit: 15,
     },
     {
       type: "Knowledge",
+      difficulty: "easy",
       question: "What is the main purpose of a doctor?",
       options: ["Sell medicine", "Help people stay healthy", "Drive ambulances", "Cook food"],
       correct: 1,
+      timeLimit: 15,
     },
     {
       type: "Direction",
+      difficulty: "easy",
       question: "In which direction does this arrow point? ➡️",
       options: ["Up", "Down", "Left", "Right"],
       correct: 3,
+      timeLimit: 10,
     },
     {
       type: "Direction",
+      difficulty: "easy",
       question: "In which direction does this arrow point? ⬆️",
       options: ["Up", "Down", "Left", "Right"],
       correct: 0,
+      timeLimit: 10,
     },
     {
       type: "Direction",
+      difficulty: "medium",
       question: "What direction is OPPOSITE to where this arrow points? ⬇️",
       options: ["Up", "Down", "Left", "Right"],
       correct: 0,
+      timeLimit: 15,
     },
     {
       type: "Direction",
+      difficulty: "medium",
       question: "What direction is OPPOSITE to where this arrow points? ⬅️",
       options: ["Up", "Down", "Left", "Right"],
       correct: 3,
+      timeLimit: 15,
     },
     {
       type: "Counting",
+      difficulty: "medium",
       question: "Count the number of X's in this text: P X Q R X S T X U V X W",
       options: ["3", "4", "5", "6"],
       correct: 1,
+      timeLimit: 20,
     },
     {
       type: "Counting",
+      difficulty: "medium",
       question: "Count the number of X's in this text: X A X B C X D X E F X",
       options: ["4", "5", "6", "7"],
       correct: 1,
+      timeLimit: 20,
     },
     {
       type: "Memory",
+      difficulty: "hard",
       question: "Study these 5 words: CHAIR, WINDOW, COFFEE, LAPTOP, GARDEN. Which word was in the middle (3rd)?",
       options: ["CHAIR", "WINDOW", "COFFEE", "LAPTOP"],
       correct: 2,
+      timeLimit: 30,
     },
     {
       type: "Memory",
+      difficulty: "medium",
       question: "Study these 5 words: RIVER, BRIDGE, MOUNTAIN, VALLEY, FOREST. Which word was first?",
       options: ["RIVER", "BRIDGE", "MOUNTAIN", "VALLEY"],
       correct: 0,
+      timeLimit: 25,
     },
     {
       type: "Categorization",
+      difficulty: "medium",
       question: "Which item doesn't belong in this group: Hammer, Screwdriver, Wrench, Apple",
       options: ["Hammer", "Screwdriver", "Wrench", "Apple"],
       correct: 3,
+      timeLimit: 20,
     },
     {
       type: "Categorization",
+      difficulty: "medium",
       question: "Which item doesn't belong in this group: Soccer, Basketball, Tennis, Microscope",
       options: ["Soccer", "Basketball", "Tennis", "Microscope"],
       correct: 3,
+      timeLimit: 20,
     },
     {
       type: "Stroop",
+      difficulty: "hard",
       question: "What COLOR is this text written in? (Ignore the word itself):",
       coloredWord: "BLUE",
       textColor: "#ef4444",
       options: ["Red", "Blue", "Green", "Yellow"],
       correct: 0,
+      timeLimit: 15,
     },
     {
       type: "Stroop",
+      difficulty: "hard",
       question: "What COLOR is this text written in? (Ignore the word itself):",
       coloredWord: "GREEN",
       textColor: "#eab308",
       options: ["Red", "Blue", "Green", "Yellow"],
       correct: 3,
+      timeLimit: 15,
     },
     {
       type: "Orientation",
+      difficulty: "easy",
       question: "What month is it currently?",
       options: ["January", "March", "November", "Check your calendar"],
       correct: 3,
+      timeLimit: 15,
     },
     {
       type: "Orientation",
+      difficulty: "easy",
       question: "What year are we in?",
       options: ["2023", "2024", "2025", "2026"],
       correct: 2,
+      timeLimit: 15,
     },
     {
       type: "Orientation",
+      difficulty: "easy",
       question: "What day of the week is it today?",
       options: ["Monday", "It varies", "Friday", "Sunday"],
       correct: 1,
+      timeLimit: 15,
     },
     {
       type: "Logic",
+      difficulty: "hard",
       question: "If the day before yesterday was Monday, what day is today?",
       options: ["Tuesday", "Wednesday", "Thursday", "Friday"],
       correct: 1,
+      timeLimit: 30,
     },
     {
       type: "Logic",
+      difficulty: "hard",
       question: "If tomorrow will be Saturday, what day was the day before yesterday?",
       options: ["Tuesday", "Wednesday", "Thursday", "Friday"],
       correct: 1,
+      timeLimit: 30,
     },
   ];
 
   const [questions] = useState(() => {
-    const shuffled = [...allQuestions].sort(() => Math.random() - 0.5);
-    return shuffled.slice(0, 5);
+    const categories = [...new Set(allQuestions.map(q => q.type))];
+    const selectedQuestions = [];
+    
+    // Ensure diversity: pick at least one question from different categories
+    const questionsPerCategory = Math.floor(5 / categories.length);
+    const remainder = 5 % categories.length;
+    
+    for (let i = 0; i < categories.length && selectedQuestions.length < 5; i++) {
+      const categoryQuestions = allQuestions.filter(q => q.type === categories[i]);
+      const numToSelect = i < remainder ? questionsPerCategory + 1 : questionsPerCategory;
+      const shuffled = [...categoryQuestions].sort(() => Math.random() - 0.5);
+      selectedQuestions.push(...shuffled.slice(0, numToSelect));
+    }
+    
+    // If we still need more questions, add random ones
+    if (selectedQuestions.length < 5) {
+      const remaining = allQuestions
+        .filter(q => !selectedQuestions.includes(q))
+        .sort(() => Math.random() - 0.5);
+      selectedQuestions.push(...remaining.slice(0, 5 - selectedQuestions.length));
+    }
+    
+    return selectedQuestions.sort(() => Math.random() - 0.5);
   });
 
   useEffect(() => {
     if (completed || !patientName || selectedAnswer !== null) return;
 
-    setTimeLeft(15);
+    const currentTimeLimit = questions[currentQuestion].timeLimit || 20;
+    setTimeLeft(currentTimeLimit);
     
     const timer = setInterval(() => {
       setTimeLeft((prev) => {
@@ -268,9 +337,21 @@ const AdultAssessment = ({ onBack }: Props) => {
 
   const handleAnswer = (index: number) => {
     setSelectedAnswer(index);
-    if (index === questions[currentQuestion].correct) {
+    const currentQ = questions[currentQuestion];
+    const isCorrect = index === currentQ.correct;
+    
+    if (isCorrect) {
       setScore(score + 1);
     }
+    
+    // Track category performance
+    setCategoryScores(prev => ({
+      ...prev,
+      [currentQ.type]: {
+        correct: (prev[currentQ.type]?.correct || 0) + (isCorrect ? 1 : 0),
+        total: (prev[currentQ.type]?.total || 0) + 1
+      }
+    }));
 
     setTimeout(() => {
       setSelectedAnswer(null);
@@ -297,23 +378,59 @@ const AdultAssessment = ({ onBack }: Props) => {
   if (completed) {
     return (
       <div className="container mx-auto px-4 py-12">
-        <div className="max-w-2xl mx-auto text-center">
-          <div className="w-20 h-20 rounded-full bg-primary flex items-center justify-center mx-auto mb-6">
-            <Briefcase className="w-10 h-10 text-primary-foreground" />
-          </div>
-          <h2 className="text-4xl font-bold mb-4 text-foreground">Assessment Complete, {patientName}</h2>
-          <p className="text-xl text-muted-foreground mb-8">
-            Score: {score} / {questions.length} ({Math.round((score / questions.length) * 100)}%)
-          </p>
-          {saving && (
-            <p className="text-sm text-muted-foreground mb-4">
-              Saving results...
-            </p>
-          )}
-          <Button onClick={onBack} size="lg">
-            <ArrowLeft className="mr-2 w-4 h-4" />
-            Back to Age Selection
-          </Button>
+        <div className="max-w-3xl mx-auto">
+          <Card className="p-8 border-border shadow-lg">
+            <div className="text-center mb-8">
+              <div className="w-20 h-20 rounded-full bg-primary flex items-center justify-center mx-auto mb-6">
+                <Briefcase className="w-10 h-10 text-primary-foreground" />
+              </div>
+              <h2 className="text-4xl font-bold mb-4 text-foreground">Assessment Complete, {patientName}</h2>
+              <p className="text-xl text-muted-foreground mb-2">
+                Overall Score: {score} / {questions.length}
+              </p>
+              <p className="text-3xl font-bold text-primary mb-8">
+                {Math.round((score / questions.length) * 100)}%
+              </p>
+            </div>
+
+            <div className="mb-8">
+              <h3 className="text-lg font-semibold mb-4 text-foreground">Performance by Category</h3>
+              <div className="grid gap-3">
+                {Object.entries(categoryScores).map(([category, scores]) => {
+                  const percentage = Math.round((scores.correct / scores.total) * 100);
+                  return (
+                    <div key={category} className="flex items-center gap-4 p-4 rounded-lg bg-muted/50">
+                      <div className="flex-1">
+                        <div className="flex justify-between mb-2">
+                          <span className="font-medium text-foreground">{category}</span>
+                          <span className="text-sm text-muted-foreground">
+                            {scores.correct}/{scores.total}
+                          </span>
+                        </div>
+                        <Progress value={percentage} className="h-2" />
+                      </div>
+                      <span className={`text-lg font-bold ${percentage >= 70 ? 'text-primary' : 'text-muted-foreground'}`}>
+                        {percentage}%
+                      </span>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+
+            {saving && (
+              <p className="text-sm text-muted-foreground mb-4 text-center">
+                Saving results...
+              </p>
+            )}
+            
+            <div className="text-center">
+              <Button onClick={onBack} size="lg">
+                <ArrowLeft className="mr-2 w-4 h-4" />
+                Back to Age Selection
+              </Button>
+            </div>
+          </Card>
         </div>
       </div>
     );
@@ -340,8 +457,15 @@ const AdultAssessment = ({ onBack }: Props) => {
                   <Timer className="w-4 h-4" />
                   <span className="text-lg font-bold">{timeLeft}s</span>
                 </div>
-                <span className="text-sm px-4 py-2 bg-primary/10 text-primary rounded-full font-medium animate-in zoom-in duration-300">
+                <span className="text-sm px-4 py-2 bg-secondary/10 text-secondary-foreground rounded-full font-medium">
                   {questions[currentQuestion].type}
+                </span>
+                <span className={`text-xs px-3 py-1 rounded-full font-medium ${
+                  questions[currentQuestion].difficulty === 'easy' ? 'bg-green-500/10 text-green-700 dark:text-green-400' :
+                  questions[currentQuestion].difficulty === 'medium' ? 'bg-yellow-500/10 text-yellow-700 dark:text-yellow-400' :
+                  'bg-red-500/10 text-red-700 dark:text-red-400'
+                }`}>
+                  {questions[currentQuestion].difficulty?.toUpperCase()}
                 </span>
               </div>
             </div>

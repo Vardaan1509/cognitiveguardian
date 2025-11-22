@@ -20,69 +20,90 @@ const AdolescentAssessment = ({ onBack }: Props) => {
   const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
   const [completed, setCompleted] = useState(false);
   const [saving, setSaving] = useState(false);
-  const [timeLeft, setTimeLeft] = useState(15);
+  const [timeLeft, setTimeLeft] = useState(20);
+  const [categoryScores, setCategoryScores] = useState<Record<string, { correct: number; total: number }>>({});
   const { toast } = useToast();
 
   const allTasks = [
     {
       type: "pattern",
+      difficulty: "medium",
       question: "Complete the pattern: 2, 4, 8, 16, __",
       options: ["24", "32", "28", "30"],
       correct: 1,
+      timeLimit: 25,
     },
     {
       type: "logic",
+      difficulty: "hard",
       question: "If all Bloops are Razzies and all Razzies are Lazzies, are all Bloops definitely Lazzies?",
       options: ["Yes", "No", "Sometimes", "Cannot determine"],
       correct: 0,
+      timeLimit: 30,
     },
     {
       type: "memory",
+      difficulty: "hard",
       question: "Study this sequence for 5 seconds: Red, Blue, Green, Yellow, Purple. What was the 4th color?",
       options: ["Green", "Yellow", "Purple", "Blue"],
       correct: 1,
+      timeLimit: 25,
     },
     {
       type: "reasoning",
+      difficulty: "easy",
       question: "What season follows autumn?",
       options: ["Summer", "Winter", "Spring", "Fall again"],
       correct: 1,
+      timeLimit: 15,
     },
     {
       type: "math",
+      difficulty: "easy",
       question: "If Sarah has 8 candies and gives away 3, how many does she have left?",
       options: ["5", "8", "11", "3"],
       correct: 0,
+      timeLimit: 20,
     },
     {
       type: "language",
+      difficulty: "medium",
       question: "Which one of these is a verb?",
       options: ["Happiness", "Running", "Tree", "Blue"],
       correct: 1,
+      timeLimit: 20,
     },
     {
       type: "health",
+      difficulty: "easy",
       question: "Which one of these is a healthy habit?",
       options: ["Eating sweets all day", "Exercising regularly", "Sleeping only 2 hours", "Never drinking water"],
       correct: 1,
+      timeLimit: 15,
     },
     {
       type: "logic",
+      difficulty: "easy",
       question: "What does it mean if the traffic light turns green?",
       options: ["Stop", "Go", "Slow down", "Turn off car"],
       correct: 1,
+      timeLimit: 15,
     },
     {
       type: "geography",
+      difficulty: "easy",
       question: "Which of these is a continent?",
       options: ["Amazon", "Africa", "Nile", "Pacific"],
       correct: 1,
+      timeLimit: 15,
     },
     {
       type: "direction",
+      difficulty: "easy",
       question: "Which direction does this arrow point? ➡️",
       options: ["Up", "Down", "Left", "Right"],
       correct: 3,
+      timeLimit: 10,
     },
     {
       type: "direction",
@@ -187,14 +208,34 @@ const AdolescentAssessment = ({ onBack }: Props) => {
   ];
 
   const [tasks] = useState(() => {
-    const shuffled = [...allTasks].sort(() => Math.random() - 0.5);
-    return shuffled.slice(0, 5);
+    const categories = [...new Set(allTasks.map(t => t.type))];
+    const selectedTasks = [];
+    
+    // Ensure diversity: pick at least one task from different categories
+    const tasksPerCategory = Math.floor(5 / Math.min(categories.length, 5));
+    
+    for (let i = 0; i < categories.length && selectedTasks.length < 5; i++) {
+      const categoryTasks = allTasks.filter(t => t.type === categories[i]);
+      const shuffled = [...categoryTasks].sort(() => Math.random() - 0.5);
+      selectedTasks.push(...shuffled.slice(0, tasksPerCategory || 1));
+    }
+    
+    // If we still need more tasks, add random ones
+    if (selectedTasks.length < 5) {
+      const remaining = allTasks
+        .filter(t => !selectedTasks.includes(t))
+        .sort(() => Math.random() - 0.5);
+      selectedTasks.push(...remaining.slice(0, 5 - selectedTasks.length));
+    }
+    
+    return selectedTasks.sort(() => Math.random() - 0.5).slice(0, 5);
   });
 
   useEffect(() => {
     if (completed || !patientName || selectedAnswer !== null) return;
 
-    setTimeLeft(15);
+    const currentTimeLimit = tasks[currentTask]?.timeLimit || 20;
+    setTimeLeft(currentTimeLimit);
     
     const timer = setInterval(() => {
       setTimeLeft((prev) => {
@@ -286,9 +327,21 @@ const AdolescentAssessment = ({ onBack }: Props) => {
 
   const handleAnswer = (index: number) => {
     setSelectedAnswer(index);
-    if (index === tasks[currentTask].correct) {
+    const currentT = tasks[currentTask];
+    const isCorrect = index === currentT.correct;
+    
+    if (isCorrect) {
       setScore(score + 1);
     }
+    
+    // Track category performance
+    setCategoryScores(prev => ({
+      ...prev,
+      [currentT.type]: {
+        correct: (prev[currentT.type]?.correct || 0) + (isCorrect ? 1 : 0),
+        total: (prev[currentT.type]?.total || 0) + 1
+      }
+    }));
 
     setTimeout(() => {
       setSelectedAnswer(null);
@@ -315,23 +368,61 @@ const AdolescentAssessment = ({ onBack }: Props) => {
   if (completed) {
     return (
       <div className="container mx-auto px-4 py-12">
-        <div className="max-w-2xl mx-auto text-center">
-          <div className="w-20 h-20 rounded-full bg-gradient-to-br from-blue-400 to-cyan-500 flex items-center justify-center mx-auto mb-6">
-            <Target className="w-10 h-10 text-white" />
-          </div>
-          <h2 className="text-4xl font-bold mb-4 text-foreground">Assessment Complete, {patientName}!</h2>
-          <p className="text-xl text-muted-foreground mb-8">
-            Score: {score} / {tasks.length} ({Math.round((score / tasks.length) * 100)}%)
-          </p>
-          {saving && (
-            <p className="text-sm text-muted-foreground mb-4">
-              Saving results...
-            </p>
-          )}
-          <Button onClick={onBack} size="lg">
-            <ArrowLeft className="mr-2 w-4 h-4" />
-            Back to Age Selection
-          </Button>
+        <div className="max-w-3xl mx-auto">
+          <Card className="p-8 border-border shadow-lg">
+            <div className="text-center mb-8">
+              <div className="w-20 h-20 rounded-full bg-gradient-to-br from-blue-400 to-cyan-500 flex items-center justify-center mx-auto mb-6">
+                <Target className="w-10 h-10 text-white" />
+              </div>
+              <h2 className="text-4xl font-bold mb-4 text-foreground">Assessment Complete, {patientName}!</h2>
+              <p className="text-xl text-muted-foreground mb-2">
+                Overall Score: {score} / {tasks.length}
+              </p>
+              <p className="text-3xl font-bold text-primary mb-6">
+                {Math.round((score / tasks.length) * 100)}%
+              </p>
+            </div>
+
+            {Object.keys(categoryScores).length > 0 && (
+              <div className="mb-8">
+                <h3 className="text-lg font-semibold mb-4 text-foreground">Performance by Category</h3>
+                <div className="grid gap-3">
+                  {Object.entries(categoryScores).map(([category, scores]) => {
+                    const percentage = Math.round((scores.correct / scores.total) * 100);
+                    return (
+                      <div key={category} className="flex items-center gap-4 p-4 rounded-lg bg-muted/50">
+                        <div className="flex-1">
+                          <div className="flex justify-between mb-2">
+                            <span className="font-medium text-foreground capitalize">{category}</span>
+                            <span className="text-sm text-muted-foreground">
+                              {scores.correct}/{scores.total}
+                            </span>
+                          </div>
+                          <Progress value={percentage} className="h-2" />
+                        </div>
+                        <span className={`text-lg font-bold ${percentage >= 70 ? 'text-primary' : 'text-muted-foreground'}`}>
+                          {percentage}%
+                        </span>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+
+            {saving && (
+              <p className="text-sm text-muted-foreground mb-4 text-center">
+                Saving results...
+              </p>
+            )}
+            
+            <div className="text-center">
+              <Button onClick={onBack} size="lg">
+                <ArrowLeft className="mr-2 w-4 h-4" />
+                Back to Age Selection
+              </Button>
+            </div>
+          </Card>
         </div>
       </div>
     );
