@@ -1,8 +1,8 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
-import { ArrowLeft, Heart } from "lucide-react";
+import { ArrowLeft, Heart, Timer } from "lucide-react";
 import { Textarea } from "@/components/ui/textarea";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
@@ -22,6 +22,7 @@ const ElderlyAssessment = ({ onBack }: Props) => {
   const [textResponse, setTextResponse] = useState("");
   const [completed, setCompleted] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [timeLeft, setTimeLeft] = useState(15);
   const { toast } = useToast();
 
   const allExercises = [
@@ -76,6 +77,37 @@ const ElderlyAssessment = ({ onBack }: Props) => {
     const shuffled = [...allExercises].sort(() => Math.random() - 0.5);
     return shuffled.slice(0, 5);
   });
+
+  useEffect(() => {
+    if (completed || !patientName || selectedAnswer !== null) return;
+
+    const current = exercises[currentExercise];
+    if (current.isMemoryIntro) return;
+
+    setTimeLeft(15);
+    
+    const timer = setInterval(() => {
+      setTimeLeft((prev) => {
+        if (prev <= 1) {
+          clearInterval(timer);
+          toast({
+            title: "Time's up! ⏰",
+            description: "You ran out of time!",
+            variant: "destructive",
+          });
+          
+          setTimeout(() => {
+            handleNext();
+          }, 1500);
+          
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, [currentExercise, completed, patientName, selectedAnswer]);
 
   const handlePatientInfoSubmit = async (name: string, age: number) => {
     try {
@@ -222,9 +254,19 @@ const ElderlyAssessment = ({ onBack }: Props) => {
               <h3 className="text-lg font-semibold text-card-foreground">
                 Exercise {currentExercise + 1} of {exercises.length}
               </h3>
-              <span className="text-sm px-4 py-2 bg-secondary/10 text-secondary rounded-full font-medium animate-in zoom-in duration-300">
-                {current.type}
-              </span>
+              <div className="flex items-center gap-3">
+                {!current.isMemoryIntro && (
+                  <div className={`flex items-center gap-2 px-4 py-2 rounded-full font-medium transition-all duration-300 ${
+                    timeLeft <= 5 ? 'bg-destructive/10 text-destructive animate-pulse' : 'bg-secondary/10 text-secondary'
+                  }`}>
+                    <Timer className="w-4 h-4" />
+                    <span className="text-lg font-bold">{timeLeft}s</span>
+                  </div>
+                )}
+                <span className="text-sm px-4 py-2 bg-secondary/10 text-secondary rounded-full font-medium animate-in zoom-in duration-300">
+                  {current.type}
+                </span>
+              </div>
             </div>
             <Progress value={progress} className="h-2 transition-all duration-500" />
           </div>

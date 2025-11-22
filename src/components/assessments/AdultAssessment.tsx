@@ -1,8 +1,8 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
-import { ArrowLeft, Briefcase } from "lucide-react";
+import { ArrowLeft, Briefcase, Timer } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import PatientInfoForm from "./PatientInfoForm";
@@ -20,6 +20,7 @@ const AdultAssessment = ({ onBack }: Props) => {
   const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
   const [completed, setCompleted] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [timeLeft, setTimeLeft] = useState(15);
   const { toast } = useToast();
 
   const allQuestions = [
@@ -65,6 +66,39 @@ const AdultAssessment = ({ onBack }: Props) => {
     const shuffled = [...allQuestions].sort(() => Math.random() - 0.5);
     return shuffled.slice(0, 5);
   });
+
+  useEffect(() => {
+    if (completed || !patientName || selectedAnswer !== null) return;
+
+    setTimeLeft(15);
+    
+    const timer = setInterval(() => {
+      setTimeLeft((prev) => {
+        if (prev <= 1) {
+          clearInterval(timer);
+          toast({
+            title: "Time's up! ⏰",
+            description: "You've got to be faster!",
+            variant: "destructive",
+          });
+          
+          setTimeout(() => {
+            if (currentQuestion < questions.length - 1) {
+              setCurrentQuestion(currentQuestion + 1);
+            } else {
+              setCompleted(true);
+              setTimeout(() => saveAssessmentResults(), 500);
+            }
+          }, 1500);
+          
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, [currentQuestion, completed, patientName, selectedAnswer]);
 
   const handlePatientInfoSubmit = async (name: string, age: number) => {
     try {
@@ -189,9 +223,17 @@ const AdultAssessment = ({ onBack }: Props) => {
               <h3 className="text-lg font-semibold text-card-foreground">
                 Question {currentQuestion + 1} of {questions.length}
               </h3>
-              <span className="text-sm px-4 py-2 bg-primary/10 text-primary rounded-full font-medium animate-in zoom-in duration-300">
-                {questions[currentQuestion].type}
-              </span>
+              <div className="flex items-center gap-3">
+                <div className={`flex items-center gap-2 px-4 py-2 rounded-full font-medium transition-all duration-300 ${
+                  timeLeft <= 5 ? 'bg-destructive/10 text-destructive animate-pulse' : 'bg-primary/10 text-primary'
+                }`}>
+                  <Timer className="w-4 h-4" />
+                  <span className="text-lg font-bold">{timeLeft}s</span>
+                </div>
+                <span className="text-sm px-4 py-2 bg-primary/10 text-primary rounded-full font-medium animate-in zoom-in duration-300">
+                  {questions[currentQuestion].type}
+                </span>
+              </div>
             </div>
             <Progress value={progress} className="h-2 transition-all duration-500" />
           </div>
