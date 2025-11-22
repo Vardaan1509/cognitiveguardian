@@ -98,6 +98,7 @@ const YouthAssessment = ({ onBack }: Props) => {
             title: "Time's up! ⏰",
             description: "You ran out of time!",
             variant: "destructive",
+            duration: 2000,
           });
           
           setTimeout(() => {
@@ -137,6 +138,7 @@ const YouthAssessment = ({ onBack }: Props) => {
         title: "Error",
         description: "Failed to save patient information. Please try again.",
         variant: "destructive",
+        duration: 2000,
       });
     }
   };
@@ -161,6 +163,7 @@ const YouthAssessment = ({ onBack }: Props) => {
       toast({
         title: "Success",
         description: "Assessment results saved successfully!",
+        duration: 2000,
       });
     } catch (error) {
       console.error("Error saving results:", error);
@@ -168,6 +171,7 @@ const YouthAssessment = ({ onBack }: Props) => {
         title: "Error",
         description: "Failed to save assessment results.",
         variant: "destructive",
+        duration: 2000,
       });
     } finally {
       setSaving(false);
