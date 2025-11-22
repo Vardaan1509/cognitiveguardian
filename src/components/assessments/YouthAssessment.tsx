@@ -1,8 +1,8 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
-import { ArrowLeft, Star, Sparkles } from "lucide-react";
+import { ArrowLeft, Star, Sparkles, Timer } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import PatientInfoForm from "./PatientInfoForm";
@@ -19,6 +19,8 @@ const YouthAssessment = ({ onBack }: Props) => {
   const [score, setScore] = useState(0);
   const [completed, setCompleted] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [timeLeft, setTimeLeft] = useState(15);
+  const [answering, setAnswering] = useState(false);
   const { toast } = useToast();
 
   const allQuestions = [
@@ -83,6 +85,39 @@ const YouthAssessment = ({ onBack }: Props) => {
     return shuffled.slice(0, 5);
   });
 
+  useEffect(() => {
+    if (completed || !patientName || answering) return;
+
+    setTimeLeft(15);
+    
+    const timer = setInterval(() => {
+      setTimeLeft((prev) => {
+        if (prev <= 1) {
+          clearInterval(timer);
+          toast({
+            title: "Time's up! ⏰",
+            description: "You ran out of time!",
+            variant: "destructive",
+          });
+          
+          setTimeout(() => {
+            if (currentQuestion < questions.length - 1) {
+              setCurrentQuestion(currentQuestion + 1);
+            } else {
+              setCompleted(true);
+              setTimeout(() => saveAssessmentResults(), 500);
+            }
+          }, 1500);
+          
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, [currentQuestion, completed, patientName, answering]);
+
   const handlePatientInfoSubmit = async (name: string, age: number) => {
     try {
       const { data, error } = await supabase
@@ -140,16 +175,20 @@ const YouthAssessment = ({ onBack }: Props) => {
   };
 
   const handleAnswer = (index: number) => {
+    setAnswering(true);
     if (index === questions[currentQuestion].correct) {
       setScore(score + 1);
     }
 
-    if (currentQuestion < questions.length - 1) {
-      setCurrentQuestion(currentQuestion + 1);
-    } else {
-      setCompleted(true);
-      setTimeout(() => saveAssessmentResults(), 500);
-    }
+    setTimeout(() => {
+      setAnswering(false);
+      if (currentQuestion < questions.length - 1) {
+        setCurrentQuestion(currentQuestion + 1);
+      } else {
+        setCompleted(true);
+        setTimeout(() => saveAssessmentResults(), 500);
+      }
+    }, 500);
   };
 
   const progress = ((currentQuestion + 1) / questions.length) * 100;
@@ -211,9 +250,17 @@ const YouthAssessment = ({ onBack }: Props) => {
         <Card className="p-8 border-2 border-primary/20 shadow-lg backdrop-blur-sm bg-card/95 animate-in slide-in-from-bottom duration-500">
           <div className="mb-8">
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-semibold text-card-foreground">
-                Question {currentQuestion + 1} of {questions.length}
-              </h3>
+              <div className="flex items-center gap-3">
+                <h3 className="text-lg font-semibold text-card-foreground">
+                  Question {currentQuestion + 1} of {questions.length}
+                </h3>
+                <div className={`flex items-center gap-2 px-3 py-1 rounded-full font-medium transition-all duration-300 ${
+                  timeLeft <= 5 ? 'bg-destructive/10 text-destructive animate-pulse' : 'bg-primary/10 text-primary'
+                }`}>
+                  <Timer className="w-4 h-4" />
+                  <span className="text-lg font-bold">{timeLeft}s</span>
+                </div>
+              </div>
               <span className="text-5xl animate-in zoom-in duration-300">{questions[currentQuestion].emoji}</span>
             </div>
             <Progress value={progress} className="mb-4 h-3 transition-all duration-500" />
