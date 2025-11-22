@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/table";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
-import { Download, RefreshCw, ArrowLeft, FileSpreadsheet } from "lucide-react";
+import { Download, RefreshCw, ArrowLeft, FileSpreadsheet, Trash2 } from "lucide-react";
 import { Link } from "react-router-dom";
 
 interface AssessmentData {
@@ -122,6 +122,41 @@ const DataExport = () => {
     return new Date(dateString).toLocaleString();
   };
 
+  const handleDelete = async (resultId: string | null) => {
+    if (!resultId) {
+      toast({
+        title: "Error",
+        description: "Cannot delete this record.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    try {
+      const { error } = await supabase
+        .from("assessment_results")
+        .delete()
+        .eq("id", resultId);
+
+      if (error) throw error;
+
+      toast({
+        title: "Success",
+        description: "Assessment record deleted successfully.",
+        duration: 2000,
+      });
+
+      fetchData();
+    } catch (error) {
+      console.error("Error deleting record:", error);
+      toast({
+        title: "Error",
+        description: "Failed to delete assessment record.",
+        variant: "destructive",
+      });
+    }
+  };
+
   return (
     <div className="min-h-screen bg-background">
       <nav className="border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0 z-50">
@@ -184,6 +219,7 @@ const DataExport = () => {
                     <TableHead>Score</TableHead>
                     <TableHead>Percentage</TableHead>
                     <TableHead>Completed At</TableHead>
+                    <TableHead className="w-[80px]">Actions</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -206,6 +242,17 @@ const DataExport = () => {
                       </TableCell>
                       <TableCell className="text-sm text-muted-foreground">
                         {formatDate(row.completed_at)}
+                      </TableCell>
+                      <TableCell>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => handleDelete(row.result_id)}
+                          disabled={!row.result_id}
+                          className="hover:bg-destructive/10 hover:text-destructive"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </Button>
                       </TableCell>
                     </TableRow>
                   ))}
