@@ -60,9 +60,12 @@ const DataExport = () => {
     const patientMap = new Map<string, GroupedPatientData>();
 
     assessmentData.forEach((assessment) => {
-      if (!patientMap.has(assessment.patient_id)) {
-        patientMap.set(assessment.patient_id, {
-          patient_id: assessment.patient_id,
+      // Group by name and age combination instead of patient_id
+      const patientKey = `${assessment.name.toLowerCase()}-${assessment.age}`;
+      
+      if (!patientMap.has(patientKey)) {
+        patientMap.set(patientKey, {
+          patient_id: assessment.patient_id, // Use first patient_id found
           name: assessment.name,
           age: assessment.age,
           assessments: [],
@@ -73,7 +76,7 @@ const DataExport = () => {
         });
       }
 
-      const patient = patientMap.get(assessment.patient_id)!;
+      const patient = patientMap.get(patientKey)!;
       if (assessment.result_id) {
         patient.assessments.push(assessment);
       }
