@@ -60,16 +60,12 @@ const Index = () => {
         <div className="container mx-auto px-4 py-12">
           {/* Hero Section */}
           <div className="text-center mb-16 max-w-4xl mx-auto">
-            <div className="inline-flex items-center gap-2 bg-accent text-accent-foreground px-4 py-2 rounded-full mb-6 text-sm font-medium">
-              <Activity className="w-4 h-4" />
-              Hospital-induced Delirium Prevention
-            </div>
             <h2 className="text-5xl font-bold mb-6 bg-gradient-to-r from-primary via-primary to-secondary bg-clip-text text-transparent">
               Cognitive Assessment System
             </h2>
             <p className="text-xl text-muted-foreground mb-8 leading-relaxed">
-              A comprehensive platform that tracks patient performance metrics and alerts healthcare staff 
-              when activity levels drop below baseline, preventing delirium onset through early detection.
+              A comprehensive platform that tracks patient performance metrics and saves the results of the tests 
+              in a secure backend for easy access by authorised personnel.
             </p>
             <div className="flex items-center justify-center gap-4">
               <Button
@@ -101,7 +97,7 @@ const Index = () => {
               </div>
               <h3 className="text-lg font-semibold mb-2 text-card-foreground">Early Detection</h3>
               <p className="text-muted-foreground">
-                Real-time alerts notify healthcare staff of concerning performance drops.
+                Identifies concerning performance drops through systematic assessment tracking.
               </p>
             </Card>
 
