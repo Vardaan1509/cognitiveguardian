@@ -11,8 +11,9 @@ import {
 } from "@/components/ui/table";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
-import { Download, RefreshCw, ArrowLeft, FileSpreadsheet, Trash2 } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Download, RefreshCw, ArrowLeft, FileSpreadsheet, Trash2, LogOut } from "lucide-react";
+import { Link, useNavigate } from "react-router-dom";
+import { useAuth } from "@/contexts/AuthContext";
 
 interface AssessmentData {
   patient_id: string;
@@ -31,6 +32,14 @@ const DataExport = () => {
   const [data, setData] = useState<AssessmentData[]>([]);
   const [loading, setLoading] = useState(true);
   const { toast } = useToast();
+  const { user, signOut } = useAuth();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!user) {
+      navigate('/auth');
+    }
+  }, [user, navigate]);
 
   const fetchData = async () => {
     setLoading(true);
@@ -189,6 +198,14 @@ const DataExport = () => {
               >
                 <Download className="w-4 h-4 mr-2" />
                 Export CSV
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={signOut}
+              >
+                <LogOut className="w-4 h-4 mr-2" />
+                Logout
               </Button>
             </div>
           </div>
