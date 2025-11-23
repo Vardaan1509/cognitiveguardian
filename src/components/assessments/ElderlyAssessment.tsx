@@ -192,17 +192,34 @@ const ElderlyAssessment = ({ onBack }: Props) => {
 
   const handlePatientInfoSubmit = async (name: string, age: number) => {
     try {
-      const { data, error } = await supabase
+      // First check if patient already exists
+      const { data: existingPatient } = await supabase
         .from("patients")
-        .insert({ name, age })
-        .select()
-        .single();
+        .select("*")
+        .eq("name", name)
+        .eq("age", age)
+        .maybeSingle();
 
-      if (error) throw error;
+      let patientData;
+      
+      if (existingPatient) {
+        // Use existing patient
+        patientData = existingPatient;
+      } else {
+        // Create new patient
+        const { data, error } = await supabase
+          .from("patients")
+          .insert({ name, age })
+          .select()
+          .single();
+
+        if (error) throw error;
+        patientData = data;
+      }
 
       setPatientName(name);
       setPatientAge(age);
-      setPatientId(data.id);
+      setPatientId(patientData.id);
     } catch (error) {
       console.error("Error saving patient info:", error);
       toast({
