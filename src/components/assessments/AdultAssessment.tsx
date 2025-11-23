@@ -61,16 +61,10 @@ const AdultAssessment = ({ onBack }: Props) => {
       correct: 1,
     },
     {
-      type: "Direction",
-      question: "In which direction does this arrow point? ➡️",
-      options: ["Up", "Down", "Left", "Right"],
-      correct: 3,
-    },
-    {
-      type: "Direction",
-      question: "In which direction does this arrow point? ⬆️",
-      options: ["Up", "Down", "Left", "Right"],
-      correct: 0,
+      type: "Pattern",
+      question: "What is the next number in the Fibonacci sequence? 1, 1, 2, 3, ...",
+      options: ["4", "5", "6", "8"],
+      correct: 1,
     },
     {
       type: "Direction",
