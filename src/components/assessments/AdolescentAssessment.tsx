@@ -37,12 +37,6 @@ const AdolescentAssessment = ({ onBack }: Props) => {
       correct: 0,
     },
     {
-      type: "memory",
-      question: "Study this sequence for 5 seconds: Red, Blue, Green, Yellow, Purple. What was the 4th color?",
-      options: ["Green", "Yellow", "Purple", "Blue"],
-      correct: 1,
-    },
-    {
       type: "reasoning",
       question: "What season follows autumn?",
       options: ["Summer", "Winter", "Spring", "Fall again"],
@@ -101,30 +95,6 @@ const AdolescentAssessment = ({ onBack }: Props) => {
       question: "Which direction is OPPOSITE to where this arrow points? ⬅️",
       options: ["Up", "Down", "Left", "Right"],
       correct: 3,
-    },
-    {
-      type: "counting",
-      question: "Count the X's: A X B C X D E X F G X H",
-      options: ["3", "4", "5", "6"],
-      correct: 1,
-    },
-    {
-      type: "counting",
-      question: "Count the X's: X M N X O P Q X R X S T",
-      options: ["3", "4", "5", "6"],
-      correct: 1,
-    },
-    {
-      type: "memory",
-      question: "Remember these words: TREE, PHONE, BOOK, CLOUD, MUSIC. Which word was third?",
-      options: ["TREE", "BOOK", "CLOUD", "MUSIC"],
-      correct: 1,
-    },
-    {
-      type: "memory",
-      question: "Remember these words: OCEAN, RIVER, MOUNTAIN, DESERT, FOREST. Which word was first?",
-      options: ["OCEAN", "RIVER", "MOUNTAIN", "FOREST"],
-      correct: 0,
     },
     {
       type: "categorization",

@@ -27,21 +27,9 @@ const ElderlyAssessment = ({ onBack }: Props) => {
 
   const allExercises = [
     {
-      type: "Memory Introduction",
-      question: "Please remember these three words: Apple, Table, Car. We'll ask you to recall them later.",
-      isMemoryIntro: true,
-    },
-    {
       type: "Orientation",
       question: "What season comes after spring?",
       options: ["Summer", "Winter", "Autumn", "Spring again"],
-      correct: 0,
-      isMultiChoice: true,
-    },
-    {
-      type: "Memory Recall",
-      question: "Can you remember and repeat these three words from earlier?",
-      options: ["Apple, Table, Car", "Apple, Chair, Car", "Orange, Table, Car", "Apple, Table, Cart"],
       correct: 0,
       isMultiChoice: true,
     },
@@ -97,34 +85,6 @@ const ElderlyAssessment = ({ onBack }: Props) => {
       question: "What is the OPPOSITE direction to where this arrow points? ⬅️",
       options: ["Up", "Down", "Left", "Right"],
       correct: 3,
-      isMultiChoice: true,
-    },
-    {
-      type: "Counting",
-      question: "Count how many X's appear here: M X N O X P Q X R",
-      options: ["2", "3", "4", "5"],
-      correct: 1,
-      isMultiChoice: true,
-    },
-    {
-      type: "Counting",
-      question: "Count how many X's appear here: X A B X C X D E X",
-      options: ["3", "4", "5", "6"],
-      correct: 1,
-      isMultiChoice: true,
-    },
-    {
-      type: "Word Memory",
-      question: "Remember these 5 words: BOOK, CHAIR, WATER, FLOWER, MUSIC. Which word was in position 3?",
-      options: ["BOOK", "CHAIR", "WATER", "FLOWER"],
-      correct: 2,
-      isMultiChoice: true,
-    },
-    {
-      type: "Word Memory",
-      question: "Remember these 5 words: TREE, HOUSE, PHONE, CLOCK, BREAD. Which word came first?",
-      options: ["TREE", "HOUSE", "PHONE", "CLOCK"],
-      correct: 0,
       isMultiChoice: true,
     },
     {
@@ -203,9 +163,6 @@ const ElderlyAssessment = ({ onBack }: Props) => {
 
   useEffect(() => {
     if (completed || !patientName || selectedAnswer !== null) return;
-
-    const current = exercises[currentExercise];
-    if (current.isMemoryIntro) return;
 
     setTimeLeft(15);
     
@@ -386,14 +343,12 @@ const ElderlyAssessment = ({ onBack }: Props) => {
                 Exercise {currentExercise + 1} of {exercises.length}
               </h3>
               <div className="flex items-center gap-3">
-                {!current.isMemoryIntro && (
-                  <div className={`flex items-center gap-2 px-4 py-2 rounded-full font-medium transition-all duration-300 ${
-                    timeLeft <= 5 ? 'bg-destructive/10 text-destructive animate-pulse' : 'bg-secondary/10 text-secondary'
-                  }`}>
-                    <Timer className="w-4 h-4" />
-                    <span className="text-lg font-bold">{timeLeft}s</span>
-                  </div>
-                )}
+                <div className={`flex items-center gap-2 px-4 py-2 rounded-full font-medium transition-all duration-300 ${
+                  timeLeft <= 5 ? 'bg-destructive/10 text-destructive animate-pulse' : 'bg-secondary/10 text-secondary'
+                }`}>
+                  <Timer className="w-4 h-4" />
+                  <span className="text-lg font-bold">{timeLeft}s</span>
+                </div>
                 <span className="text-sm px-4 py-2 bg-secondary/10 text-secondary rounded-full font-medium animate-in zoom-in duration-300">
                   {current.type}
                 </span>
@@ -411,17 +366,6 @@ const ElderlyAssessment = ({ onBack }: Props) => {
               </span>
             )}
           </h2>
-
-          {current.isMemoryIntro && (
-            <div className="space-y-6 animate-in zoom-in duration-500">
-              <p className="text-lg text-muted-foreground text-center p-8 bg-secondary/5 rounded-lg border border-secondary/10">
-                Please take a moment to remember these words.
-              </p>
-              <Button onClick={handleNext} size="lg" className="w-full hover:scale-[1.02] active:scale-95 transition-all">
-                Continue
-              </Button>
-            </div>
-          )}
 
           {current.isMultiChoice && (
             <div className="grid gap-4">
