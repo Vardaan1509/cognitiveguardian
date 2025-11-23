@@ -212,7 +212,7 @@ const AdolescentAssessment = ({ onBack }: Props) => {
               setCurrentTask(currentTask + 1);
             } else {
               setCompleted(true);
-              setTimeout(() => saveAssessmentResults(), 500);
+              setTimeout(() => saveAssessmentResults(score), 500);
             }
           }, 1500);
           
@@ -249,17 +249,17 @@ const AdolescentAssessment = ({ onBack }: Props) => {
     }
   };
 
-  const saveAssessmentResults = async () => {
+  const saveAssessmentResults = async (finalScore: number) => {
     if (!patientId) return;
 
     setSaving(true);
     try {
-      const percentage = (score / tasks.length) * 100;
+      const percentage = (finalScore / tasks.length) * 100;
       
       const { error } = await supabase.from("assessment_results").insert({
         patient_id: patientId,
         assessment_type: "adolescent",
-        score,
+        score: finalScore,
         total_questions: tasks.length,
         percentage,
       });
@@ -286,8 +286,10 @@ const AdolescentAssessment = ({ onBack }: Props) => {
 
   const handleAnswer = (index: number) => {
     setSelectedAnswer(index);
-    if (index === tasks[currentTask].correct) {
-      setScore(score + 1);
+    const isCorrect = index === tasks[currentTask].correct;
+    const newScore = isCorrect ? score + 1 : score;
+    if (isCorrect) {
+      setScore(newScore);
     }
 
     setTimeout(() => {
@@ -296,7 +298,7 @@ const AdolescentAssessment = ({ onBack }: Props) => {
         setCurrentTask(currentTask + 1);
       } else {
         setCompleted(true);
-        setTimeout(() => saveAssessmentResults(), 500);
+        setTimeout(() => saveAssessmentResults(newScore), 500);
       }
     }, 1000);
   };

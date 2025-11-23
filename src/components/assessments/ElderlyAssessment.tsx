@@ -221,7 +221,7 @@ const ElderlyAssessment = ({ onBack }: Props) => {
           });
           
           setTimeout(() => {
-            handleNext();
+            handleNext(score);
           }, 1500);
           
           return 0;
@@ -257,17 +257,17 @@ const ElderlyAssessment = ({ onBack }: Props) => {
     }
   };
 
-  const saveAssessmentResults = async () => {
+  const saveAssessmentResults = async (finalScore: number) => {
     if (!patientId) return;
 
     setSaving(true);
     try {
-      const percentage = (score / exercises.length) * 100;
+      const percentage = (finalScore / exercises.length) * 100;
       
       const { error } = await supabase.from("assessment_results").insert({
         patient_id: patientId,
         assessment_type: "elderly",
-        score,
+        score: finalScore,
         total_questions: exercises.length,
         percentage,
       });
@@ -295,30 +295,34 @@ const ElderlyAssessment = ({ onBack }: Props) => {
   const handleMultiChoice = (index: number) => {
     setSelectedAnswer(index);
     const current = exercises[currentExercise];
-    if (current.correct !== undefined && index === current.correct) {
-      setScore(score + 1);
+    const isCorrect = current.correct !== undefined && index === current.correct;
+    const newScore = isCorrect ? score + 1 : score;
+    if (isCorrect) {
+      setScore(newScore);
     }
 
     setTimeout(() => {
       setSelectedAnswer(null);
-      handleNext();
+      handleNext(newScore);
     }, 1000);
   };
 
   const handleOpenEnded = () => {
+    const newScore = textResponse.trim() ? score + 1 : score;
     if (textResponse.trim()) {
-      setScore(score + 1);
+      setScore(newScore);
     }
     setTextResponse("");
-    handleNext();
+    handleNext(newScore);
   };
 
-  const handleNext = () => {
+  const handleNext = (currentScoreOrEvent?: number | React.MouseEvent) => {
+    const currentScore = typeof currentScoreOrEvent === 'number' ? currentScoreOrEvent : score;
     if (currentExercise < exercises.length - 1) {
       setCurrentExercise(currentExercise + 1);
     } else {
       setCompleted(true);
-      setTimeout(() => saveAssessmentResults(), 500);
+      setTimeout(() => saveAssessmentResults(currentScore), 500);
     }
   };
 
