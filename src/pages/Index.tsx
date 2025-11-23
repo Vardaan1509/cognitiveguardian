@@ -1,12 +1,14 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Brain, Users, Activity, AlertCircle, TrendingUp, ArrowRight, FileSpreadsheet } from "lucide-react";
+import { Brain, Users, Activity, AlertCircle, TrendingUp, ArrowRight, FileSpreadsheet, LogIn, LogOut } from "lucide-react";
 import AgeSelection from "@/components/AgeSelection";
 import { Link } from "react-router-dom";
+import { useAuth } from "@/contexts/AuthContext";
 
 const Index = () => {
   const [view, setView] = useState<"home" | "assessment">("home");
+  const { user, signOut } = useAuth();
 
   return (
     <div className="min-h-screen bg-background">
@@ -37,12 +39,27 @@ const Index = () => {
             >
               Assessment
             </Button>
-            <Link to="/data-export">
-              <Button variant="outline" size="sm">
-                <FileSpreadsheet className="w-4 h-4 mr-2" />
-                View Data
-              </Button>
-            </Link>
+            {user ? (
+              <>
+                <Link to="/data-export">
+                  <Button variant="outline" size="sm">
+                    <FileSpreadsheet className="w-4 h-4 mr-2" />
+                    View Data
+                  </Button>
+                </Link>
+                <Button variant="outline" size="sm" onClick={signOut}>
+                  <LogOut className="w-4 h-4 mr-2" />
+                  Logout
+                </Button>
+              </>
+            ) : (
+              <Link to="/auth">
+                <Button variant="outline" size="sm">
+                  <LogIn className="w-4 h-4 mr-2" />
+                  Login
+                </Button>
+              </Link>
+            )}
           </div>
         </div>
       </nav>
