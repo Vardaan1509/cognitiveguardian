@@ -11,9 +11,11 @@ import {
 } from "@/components/ui/table";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
-import { Download, RefreshCw, ArrowLeft, FileSpreadsheet, Trash2, LogOut } from "lucide-react";
+import { Download, RefreshCw, ArrowLeft, FileSpreadsheet, Trash2, LogOut, ChevronDown, ChevronRight, TrendingUp, TrendingDown, Minus } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
+import { Badge } from "@/components/ui/badge";
 
 interface AssessmentData {
   patient_id: string;
@@ -28,8 +30,21 @@ interface AssessmentData {
   completed_at: string | null;
 }
 
+interface GroupedPatientData {
+  patient_id: string;
+  name: string;
+  age: number;
+  assessments: AssessmentData[];
+  totalAssessments: number;
+  averageScore: number;
+  latestScore: number;
+  trend: 'up' | 'down' | 'stable' | 'new';
+}
+
 const DataExport = () => {
   const [data, setData] = useState<AssessmentData[]>([]);
+  const [groupedData, setGroupedData] = useState<GroupedPatientData[]>([]);
+  const [expandedPatients, setExpandedPatients] = useState<Set<string>>(new Set());
   const [loading, setLoading] = useState(true);
   const { toast } = useToast();
   const { user, signOut } = useAuth();
@@ -40,6 +55,70 @@ const DataExport = () => {
       navigate('/auth');
     }
   }, [user, navigate]);
+
+  const groupDataByPatient = (assessmentData: AssessmentData[]) => {
+    const patientMap = new Map<string, GroupedPatientData>();
+
+    assessmentData.forEach((assessment) => {
+      if (!patientMap.has(assessment.patient_id)) {
+        patientMap.set(assessment.patient_id, {
+          patient_id: assessment.patient_id,
+          name: assessment.name,
+          age: assessment.age,
+          assessments: [],
+          totalAssessments: 0,
+          averageScore: 0,
+          latestScore: 0,
+          trend: 'new',
+        });
+      }
+
+      const patient = patientMap.get(assessment.patient_id)!;
+      if (assessment.result_id) {
+        patient.assessments.push(assessment);
+      }
+    });
+
+    // Calculate statistics and trends for each patient
+    const grouped = Array.from(patientMap.values()).map((patient) => {
+      const sortedAssessments = patient.assessments.sort(
+        (a, b) => new Date(b.completed_at!).getTime() - new Date(a.completed_at!).getTime()
+      );
+
+      const totalAssessments = sortedAssessments.length;
+      const averageScore =
+        totalAssessments > 0
+          ? sortedAssessments.reduce((sum, a) => sum + (a.percentage || 0), 0) / totalAssessments
+          : 0;
+      const latestScore = sortedAssessments[0]?.percentage || 0;
+
+      // Determine trend
+      let trend: 'up' | 'down' | 'stable' | 'new' = 'new';
+      if (totalAssessments >= 2) {
+        const previousScore = sortedAssessments[1]?.percentage || 0;
+        const difference = latestScore - previousScore;
+        if (difference > 5) trend = 'up';
+        else if (difference < -5) trend = 'down';
+        else trend = 'stable';
+      }
+
+      return {
+        ...patient,
+        assessments: sortedAssessments,
+        totalAssessments,
+        averageScore,
+        latestScore,
+        trend,
+      };
+    });
+
+    // Sort by latest assessment date
+    return grouped.sort((a, b) => {
+      const dateA = a.assessments[0]?.completed_at || '';
+      const dateB = b.assessments[0]?.completed_at || '';
+      return new Date(dateB).getTime() - new Date(dateA).getTime();
+    });
+  };
 
   const fetchData = async () => {
     setLoading(true);
@@ -52,6 +131,7 @@ const DataExport = () => {
       if (error) throw error;
 
       setData(assessmentData || []);
+      setGroupedData(groupDataByPatient(assessmentData || []));
     } catch (error) {
       console.error("Error fetching data:", error);
       toast({
@@ -166,6 +246,42 @@ const DataExport = () => {
     }
   };
 
+  const togglePatient = (patientId: string) => {
+    const newExpanded = new Set(expandedPatients);
+    if (newExpanded.has(patientId)) {
+      newExpanded.delete(patientId);
+    } else {
+      newExpanded.add(patientId);
+    }
+    setExpandedPatients(newExpanded);
+  };
+
+  const getTrendIcon = (trend: string) => {
+    switch (trend) {
+      case 'up':
+        return <TrendingUp className="w-4 h-4 text-green-500" />;
+      case 'down':
+        return <TrendingDown className="w-4 h-4 text-red-500" />;
+      case 'stable':
+        return <Minus className="w-4 h-4 text-yellow-500" />;
+      default:
+        return null;
+    }
+  };
+
+  const getTrendBadge = (trend: string) => {
+    switch (trend) {
+      case 'up':
+        return <Badge className="bg-green-500/10 text-green-600 hover:bg-green-500/20">Improving</Badge>;
+      case 'down':
+        return <Badge className="bg-red-500/10 text-red-600 hover:bg-red-500/20">Declining</Badge>;
+      case 'stable':
+        return <Badge className="bg-yellow-500/10 text-yellow-600 hover:bg-yellow-500/20">Stable</Badge>;
+      default:
+        return <Badge className="bg-blue-500/10 text-blue-600 hover:bg-blue-500/20">New Patient</Badge>;
+    }
+  };
+
   return (
     <div className="min-h-screen bg-background">
       <nav className="border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0 z-50">
@@ -219,93 +335,162 @@ const DataExport = () => {
               <RefreshCw className="w-8 h-8 animate-spin mx-auto mb-4 text-primary" />
               <p className="text-muted-foreground">Loading data...</p>
             </div>
-          ) : data.length === 0 ? (
+          ) : groupedData.length === 0 ? (
             <div className="p-8 text-center">
               <p className="text-muted-foreground">
                 No assessment data found. Complete some assessments to see data here.
               </p>
             </div>
           ) : (
-            <div className="overflow-x-auto">
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Name</TableHead>
-                    <TableHead>Age</TableHead>
-                    <TableHead>Assessment Type</TableHead>
-                    <TableHead>Score</TableHead>
-                    <TableHead>Percentage</TableHead>
-                    <TableHead>Completed At</TableHead>
-                    <TableHead className="w-[80px]">Actions</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {data.map((row, index) => (
-                    <TableRow key={index}>
-                      <TableCell className="font-medium">{row.name}</TableCell>
-                      <TableCell>{row.age}</TableCell>
-                      <TableCell className="capitalize">
-                        {row.assessment_type || "N/A"}
-                      </TableCell>
-                      <TableCell>
-                        {row.score !== null && row.total_questions !== null
-                          ? `${row.score} / ${row.total_questions}`
-                          : "N/A"}
-                      </TableCell>
-                      <TableCell>
-                        {row.percentage !== null
-                          ? `${row.percentage.toFixed(1)}%`
-                          : "N/A"}
-                      </TableCell>
-                      <TableCell className="text-sm text-muted-foreground">
-                        {formatDate(row.completed_at)}
-                      </TableCell>
-                      <TableCell>
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          onClick={() => handleDelete(row.result_id)}
-                          disabled={!row.result_id}
-                          className="hover:bg-destructive/10 hover:text-destructive"
-                        >
-                          <Trash2 className="w-4 h-4" />
-                        </Button>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
+            <div className="space-y-2 p-4">
+              {groupedData.map((patient) => (
+                <Collapsible
+                  key={patient.patient_id}
+                  open={expandedPatients.has(patient.patient_id)}
+                  onOpenChange={() => togglePatient(patient.patient_id)}
+                >
+                  <Card className="border-border">
+                    <CollapsibleTrigger className="w-full">
+                      <div className="p-4 hover:bg-accent/50 transition-colors">
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-4">
+                            {expandedPatients.has(patient.patient_id) ? (
+                              <ChevronDown className="w-5 h-5 text-muted-foreground" />
+                            ) : (
+                              <ChevronRight className="w-5 h-5 text-muted-foreground" />
+                            )}
+                            <div className="text-left">
+                              <div className="flex items-center gap-3">
+                                <span className="font-semibold text-lg">{patient.name}</span>
+                                <Badge variant="outline">{patient.age} years</Badge>
+                                {getTrendBadge(patient.trend)}
+                              </div>
+                              <div className="text-sm text-muted-foreground mt-1">
+                                {patient.totalAssessments} assessment{patient.totalAssessments !== 1 ? 's' : ''} completed
+                              </div>
+                            </div>
+                          </div>
+                          <div className="flex items-center gap-6 text-sm">
+                            <div className="text-right">
+                              <div className="text-muted-foreground">Latest Score</div>
+                              <div className="flex items-center gap-2">
+                                {getTrendIcon(patient.trend)}
+                                <span className="font-semibold text-lg">
+                                  {patient.latestScore.toFixed(1)}%
+                                </span>
+                              </div>
+                            </div>
+                            <div className="text-right">
+                              <div className="text-muted-foreground">Average Score</div>
+                              <div className="font-semibold text-lg">
+                                {patient.averageScore.toFixed(1)}%
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </CollapsibleTrigger>
+                    <CollapsibleContent>
+                      <div className="border-t border-border">
+                        <div className="p-4 bg-muted/30">
+                          <h4 className="font-semibold mb-3 text-sm text-muted-foreground uppercase tracking-wide">
+                            Assessment History
+                          </h4>
+                          <Table>
+                            <TableHeader>
+                              <TableRow>
+                                <TableHead>Date</TableHead>
+                                <TableHead>Assessment Type</TableHead>
+                                <TableHead>Score</TableHead>
+                                <TableHead>Percentage</TableHead>
+                                <TableHead className="w-[80px]">Actions</TableHead>
+                              </TableRow>
+                            </TableHeader>
+                            <TableBody>
+                              {patient.assessments.map((assessment, index) => (
+                                <TableRow key={assessment.result_id || index}>
+                                  <TableCell className="text-sm">
+                                    {formatDate(assessment.completed_at)}
+                                  </TableCell>
+                                  <TableCell className="capitalize">
+                                    {assessment.assessment_type || "N/A"}
+                                  </TableCell>
+                                  <TableCell>
+                                    {assessment.score !== null && assessment.total_questions !== null
+                                      ? `${assessment.score} / ${assessment.total_questions}`
+                                      : "N/A"}
+                                  </TableCell>
+                                  <TableCell>
+                                    <div className="flex items-center gap-2">
+                                      <span className={`font-medium ${
+                                        (assessment.percentage || 0) >= 70
+                                          ? 'text-green-600'
+                                          : (assessment.percentage || 0) >= 50
+                                          ? 'text-yellow-600'
+                                          : 'text-red-600'
+                                      }`}>
+                                        {assessment.percentage !== null
+                                          ? `${assessment.percentage.toFixed(1)}%`
+                                          : "N/A"}
+                                      </span>
+                                    </div>
+                                  </TableCell>
+                                  <TableCell>
+                                    <Button
+                                      variant="ghost"
+                                      size="icon"
+                                      onClick={() => handleDelete(assessment.result_id)}
+                                      disabled={!assessment.result_id}
+                                      className="hover:bg-destructive/10 hover:text-destructive"
+                                    >
+                                      <Trash2 className="w-4 h-4" />
+                                    </Button>
+                                  </TableCell>
+                                </TableRow>
+                              ))}
+                            </TableBody>
+                          </Table>
+                        </div>
+                      </div>
+                    </CollapsibleContent>
+                  </Card>
+                </Collapsible>
+              ))}
             </div>
           )}
         </Card>
 
         <div className="mt-6 p-4 bg-muted/50 rounded-lg">
           <h3 className="font-semibold mb-2 text-foreground">Data Summary</h3>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4 text-sm">
             <div>
               <span className="text-muted-foreground">Total Patients:</span>
               <span className="ml-2 font-medium text-foreground">
-                {new Set(data.map((d) => d.patient_id)).size}
+                {groupedData.length}
               </span>
             </div>
             <div>
               <span className="text-muted-foreground">Total Assessments:</span>
               <span className="ml-2 font-medium text-foreground">
-                {data.filter((d) => d.result_id !== null).length}
+                {groupedData.reduce((sum, p) => sum + p.totalAssessments, 0)}
               </span>
             </div>
             <div>
               <span className="text-muted-foreground">Average Score:</span>
               <span className="ml-2 font-medium text-foreground">
-                {data.filter((d) => d.percentage !== null).length > 0
+                {groupedData.length > 0
                   ? (
-                      data
-                        .filter((d) => d.percentage !== null)
-                        .reduce((sum, d) => sum + (d.percentage || 0), 0) /
-                      data.filter((d) => d.percentage !== null).length
+                      groupedData.reduce((sum, p) => sum + p.averageScore, 0) /
+                      groupedData.length
                     ).toFixed(1)
                   : "0"}
                 %
+              </span>
+            </div>
+            <div>
+              <span className="text-muted-foreground">Patients Improving:</span>
+              <span className="ml-2 font-medium text-green-600">
+                {groupedData.filter((p) => p.trend === 'up').length}
               </span>
             </div>
           </div>
