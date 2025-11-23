@@ -323,16 +323,11 @@ const AdolescentAssessment = ({ onBack }: Props) => {
               <h3 className="text-lg font-semibold text-card-foreground">
                 Task {currentTask + 1} of {tasks.length}
               </h3>
-              <div className="flex items-center gap-3">
-                <div className={`flex items-center gap-2 px-4 py-2 rounded-full font-medium transition-all duration-300 ${
-                  timeLeft <= 5 ? 'bg-destructive/10 text-destructive animate-pulse' : 'bg-primary/10 text-primary'
-                }`}>
-                  <Timer className="w-4 h-4" />
-                  <span className="text-lg font-bold">{timeLeft}s</span>
-                </div>
-                <span className="text-sm px-4 py-2 bg-primary/10 text-primary rounded-full font-medium animate-in zoom-in duration-300">
-                  {tasks[currentTask].type}
-                </span>
+              <div className={`flex items-center gap-2 px-4 py-2 rounded-full font-medium transition-all duration-300 ${
+                timeLeft <= 5 ? 'bg-destructive/10 text-destructive animate-pulse' : 'bg-primary/10 text-primary'
+              }`}>
+                <Timer className="w-4 h-4" />
+                <span className="text-lg font-bold">{timeLeft}s</span>
               </div>
             </div>
             <Progress value={progress} className="h-2 transition-all duration-500" />
