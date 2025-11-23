@@ -60,7 +60,7 @@ const Index = () => {
         <div className="container mx-auto px-4 py-12">
           {/* Hero Section */}
           <div className="text-center mb-16 max-w-4xl mx-auto">
-            <h2 className="text-5xl font-bold mb-6 bg-gradient-to-r from-primary via-primary to-secondary bg-clip-text text-transparent">
+            <h2 className="text-5xl font-bold mb-6 bg-gradient-to-r from-primary via-primary to-secondary bg-clip-text text-transparent leading-tight pb-2">
               Cognitive Assessment System
             </h2>
             <p className="text-xl text-muted-foreground mb-8 leading-relaxed">
