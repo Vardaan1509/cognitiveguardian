@@ -90,6 +90,14 @@ export default function Auth() {
             <Button type="submit" className="w-full" disabled={loading}>
               {loading ? 'Signing in...' : 'Sign In'}
             </Button>
+            <Button 
+              type="button" 
+              variant="outline" 
+              className="w-full" 
+              onClick={() => navigate('/')}
+            >
+              Back to Home
+            </Button>
           </form>
         </CardContent>
       </Card>
