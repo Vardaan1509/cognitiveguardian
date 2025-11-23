@@ -85,30 +85,6 @@ const AdultAssessment = ({ onBack }: Props) => {
       correct: 3,
     },
     {
-      type: "Counting",
-      question: "Count the number of X's in this text: P X Q R X S T X U V X W",
-      options: ["3", "4", "5", "6"],
-      correct: 1,
-    },
-    {
-      type: "Counting",
-      question: "Count the number of X's in this text: X A X B C X D X E F X",
-      options: ["4", "5", "6", "7"],
-      correct: 1,
-    },
-    {
-      type: "Memory",
-      question: "Study these 5 words: CHAIR, WINDOW, COFFEE, LAPTOP, GARDEN. Which word was in the middle (3rd)?",
-      options: ["CHAIR", "WINDOW", "COFFEE", "LAPTOP"],
-      correct: 2,
-    },
-    {
-      type: "Memory",
-      question: "Study these 5 words: RIVER, BRIDGE, MOUNTAIN, VALLEY, FOREST. Which word was first?",
-      options: ["RIVER", "BRIDGE", "MOUNTAIN", "VALLEY"],
-      correct: 0,
-    },
-    {
       type: "Categorization",
       question: "Which item doesn't belong in this group: Hammer, Screwdriver, Wrench, Apple",
       options: ["Hammer", "Screwdriver", "Wrench", "Apple"],

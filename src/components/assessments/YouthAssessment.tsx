@@ -97,30 +97,6 @@ const YouthAssessment = ({ onBack }: Props) => {
       emoji: "🔄",
     },
     {
-      question: "Count the X's: X B X D X F",
-      options: ["2", "3", "4", "5"],
-      correct: 1,
-      emoji: "🔢",
-    },
-    {
-      question: "Count the X's: A X C X E X G X",
-      options: ["3", "4", "5", "6"],
-      correct: 1,
-      emoji: "🔢",
-    },
-    {
-      question: "Remember: CAT, DOG, FISH, BIRD, BEAR. Which was third?",
-      options: ["CAT", "DOG", "FISH", "BIRD"],
-      correct: 2,
-      emoji: "🧠",
-    },
-    {
-      question: "Remember: SUN, MOON, STAR, CLOUD, RAIN. Which was first?",
-      options: ["SUN", "MOON", "STAR", "CLOUD"],
-      correct: 0,
-      emoji: "🧠",
-    },
-    {
       question: "Which doesn't belong: Apple, Banana, Car, Orange?",
       options: ["Apple", "Banana", "Car", "Orange"],
       correct: 2,
