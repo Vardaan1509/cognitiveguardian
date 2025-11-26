@@ -103,7 +103,7 @@ const ElderlyAssessment = ({ onBack }: Props) => {
     },
     {
       type: "Color Recognition",
-      question: "What COLOR is this word written in? (Don't read the word):",
+      question: "What COLOR is this word written in?:",
       coloredWord: "BLUE",
       textColor: "#ef4444",
       options: ["Red", "Blue", "Green", "Yellow"],
@@ -112,7 +112,7 @@ const ElderlyAssessment = ({ onBack }: Props) => {
     },
     {
       type: "Color Recognition",
-      question: "What COLOR is this word written in? (Don't read the word):",
+      question: "What COLOR is this word written in?:",
       coloredWord: "GREEN",
       textColor: "#3b82f6",
       options: ["Red", "Blue", "Green", "Yellow"],
@@ -121,23 +121,9 @@ const ElderlyAssessment = ({ onBack }: Props) => {
     },
     {
       type: "Orientation",
-      question: "What month is it right now?",
-      options: ["January", "March", "Please check the calendar", "December"],
-      correct: 2,
-      isMultiChoice: true,
-    },
-    {
-      type: "Orientation",
       question: "What year are we in currently?",
       options: ["2023", "2024", "2025", "2026"],
       correct: 2,
-      isMultiChoice: true,
-    },
-    {
-      type: "Orientation",
-      question: "What day of the week is today?",
-      options: ["Monday", "Check your calendar", "Friday", "Sunday"],
-      correct: 1,
       isMultiChoice: true,
     },
     {
