@@ -110,7 +110,7 @@ const AdolescentAssessment = ({ onBack }: Props) => {
     },
     {
       type: "stroop",
-      question: "What COLOR is this text written in? (Ignore what it says):",
+      question: "What COLOR is this text written in?:",
       coloredWord: "BLUE",
       textColor: "#ef4444",
       options: ["Red", "Blue", "Green", "Yellow"],
@@ -118,7 +118,7 @@ const AdolescentAssessment = ({ onBack }: Props) => {
     },
     {
       type: "stroop",
-      question: "What COLOR is this text written in? (Ignore what it says):",
+      question: "What COLOR is this text written in?:",
       coloredWord: "RED",
       textColor: "#3b82f6",
       options: ["Red", "Blue", "Green", "Yellow"],
@@ -126,20 +126,8 @@ const AdolescentAssessment = ({ onBack }: Props) => {
     },
     {
       type: "orientation",
-      question: "What month is it right now?",
-      options: ["January", "March", "November", "Depends on when you take this"],
-      correct: 3,
-    },
-    {
-      type: "orientation",
       question: "What year is it?",
       options: ["2023", "2024", "2025", "2026"],
-      correct: 2,
-    },
-    {
-      type: "orientation",
-      question: "What day of the week is today?",
-      options: ["Monday", "Tuesday", "Depends on when you take this", "Friday"],
       correct: 2,
     },
     {
