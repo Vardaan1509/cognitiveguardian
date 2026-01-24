@@ -50,7 +50,6 @@ npm run dev
 # 🔑 Environment Variables
 To run this project, you will need to add the following environment variables to your .env file in the root directory:
 ```
-text
 VITE_SUPABASE_URL=your_supabase_url
 VITE_SUPABASE_ANON_KEY=your_supabase_anon_key
 VITE_AI_API_KEY=your_ai_provider_key
