@@ -40,7 +40,7 @@ Visualization: Individualized dashboards render the CSV data into actionable per
 git clone https://github.com/Vardaan1509/cognitiveguardian.git
 cd cognitiveguardian
 ```
-###2. Install dependencies
+### 2. Install dependencies
 ```bash
 npm install
 ```
