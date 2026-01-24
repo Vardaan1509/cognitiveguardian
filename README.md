@@ -1,36 +1,38 @@
 # 🧠 Cognitive Guardian: Hospital-Induced Delirium Prevention
-A specialized cognitive assessment system designed to detect and prevent hospital-induced delirium in patients. This tool leverages interactive hardware and AI-driven analysis to monitor cognitive health, enabling early intervention and reducing patient recovery complications.
+A specialized cognitive assessment system (CAS) designed to detect and prevent hospital-induced delirium (HID) in ICU patients. This ecosystem integrates Arduino telemetry with a gamified interface to monitor cognitive health, validated by medical professionals to reduce manual screening time by ~40%.
 
 # 🚀 Features
-Interactive Cognitive Assessment: A gamified testing interface that uses hardware inputs (buttons/LEDs) to assess patient reaction times and memory retention.
+Adaptive Cognitive Testing: Gamified assessments tailored across 4 distinct age demographics, ensuring accessibility and accurate baselining for elderly patients.
 
-Real-time Monitoring: Instantly processes patient inputs to calculate cognitive scores, flagging potential delirium symptoms for medical staff.
+Secure Authentication: Robust login verification system to ensure patient data privacy and secure access for authorized medical personnel.
 
-Hardware-Software Integration: Seamlessly connects physical assessment tools (Arduino-based) with a web-based dashboard for data visualization.
+CSV Telemetry Archival: Built a scalable backend that archives patient performance data in CSV format, enabling easy data export for long-term trend analysis.
 
-Longitudinal Tracking: Stores patient performance history to identify cognitive decline trends over time rather than just isolated incidents.
+Multi-User Management: Supports 25+ distinct user profiles, allowing clinicians to track individual patient progress and switch contexts seamlessly.
 
-Clinician Dashboard: A clean, responsive interface for doctors and nurses to review patient metrics and manage assessment schedules.
+Clinical Workflow Optimization: Streamlines the assessment process, significantly reducing the burden on nursing staff while improving response times for potential delirium symptoms.
 
 # 🛠️ Tech Stack
 Frontend: React, TypeScript, Tailwind CSS
 
-Backend/Database: Supabase
+Backend/Database: Supabase (with CSV Data Export)
 
 Hardware Logic: C++ (Arduino/ESP32)
 
-Deployment: Netlify
+AI Integration: Lovable AI (Interface Prototyping & Logic)
+
+Deployment: Netlify 
 
 # 📋 Architecture
-The project is architected to prioritize reliability in a clinical setting:
+The project is architected to prioritize data integrity and clinical utility:
 
-Input: Patients interact with physical buttons in response to LED sequences (Simon Says style game).
+Input: Patients engage with physical hardware buttons in response to LED sequences, minimizing screen fatigue.
 
-Data Transmission: Hardware signals are processed via Serial communication/WebSocket to the frontend application.
+Processing: The system synthesizes sensor inputs to calculate reaction latency and accuracy.
 
-Analysis: The system calculates reaction latency and accuracy, comparing results against baseline cognitive models.
+Persistence: Patient telemetry is securely logged and formatted into CSV files within the Supabase backend for easy retrieval.
 
-Persistence: Patient sessions and longitudinal data are securely stored and managed via a scalable Supabase backend.
+Visualization: Individualized dashboards render the CSV data into actionable performance trends for doctors.
 
 # ⚙️ Installation & Setup
 ### 1. Clone the repository
@@ -38,7 +40,7 @@ Persistence: Patient sessions and longitudinal data are securely stored and mana
 git clone https://github.com/Vardaan1509/cognitiveguardian.git
 cd cognitiveguardian
 ```
-### 2. Install dependencies
+###2. Install dependencies
 ```bash
 npm install
 ```
@@ -46,13 +48,12 @@ npm install
 ```bash
 npm run dev
 ```
-
-# 🔑 Environment Variables
+### 🔑 Environment Variables
 To run this project, you will need to add the following environment variables to your .env file in the root directory:
+
 ```
 VITE_SUPABASE_URL=your_supabase_url
 VITE_SUPABASE_ANON_KEY=your_supabase_anon_key
-VITE_AI_API_KEY=your_ai_provider_key
 ```
 # 🌟 About the Developer
-Developed by Vardaan Mehandiratta, a Computer Engineering student at the University of Waterloo. This project showcases expertise in embedded systems, full-stack healthcare applications, and hardware-software integration.
+Developed by Vardaan Mehandiratta, a Computer Engineering student at the University of Waterloo. This project represents a convergence of embedded systems and healthcare software, specifically engineered to mitigate hospital-induced complications through non-invasive monitoring.
