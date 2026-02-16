@@ -1,5 +1,5 @@
 # 🧠 Cognitive Guardian: Hospital-Induced Delirium Prevention
-A specialized cognitive assessment system (CAS) designed to detect and prevent hospital-induced delirium (HID) in ICU patients. This ecosystem integrates Arduino telemetry with a gamified interface to monitor cognitive health, validated by medical professionals to reduce manual screening time by ~40%.
+A specialized cognitive assessment system (CAS) designed to detect and prevent hospital-induced delirium (HID) in ICU patients. This ecosystem integrates Arduino telemetry with a gamified interface to monitor cognitive health, validated by medical professionals to reduce manual screening time by 40%.
 
 # 🚀 Features
 Adaptive Cognitive Testing: Gamified assessments tailored across 4 distinct age demographics, ensuring accessibility and accurate baselining for elderly patients.
